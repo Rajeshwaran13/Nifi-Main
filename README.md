@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # NiFi Builder (data-flow-builder)
 
 A high-performance, visual data flow builder inspired by Apache NiFi, built with React 19, @xyflow/react, and Zustand.
@@ -101,3 +102,6 @@ Ensure the wrapper container has a defined height, as the builder expands to fil
   height: 800px;
 }
 ```
+=======
+# Nifi-Main
+>>>>>>> ae2fa6e4c0acf3324b7a020d0d061f2cc021bb9c
