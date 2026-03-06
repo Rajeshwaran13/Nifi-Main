@@ -1,0 +1,1448 @@
+{
+    "processors": [
+        {
+            "name": "Create Data Flow",
+            "type": "DataFlow",
+            "aliasName": "Add Data Flow",
+            "properties": [
+                {
+                    "key": "vendor",
+                    "label": "Vendor",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "Honeywell",
+                            "value": "Honeywell"
+                        },
+                        {
+                            "label": "Trinity",
+                            "value": "Trinity"
+                        }
+                    ],
+                    "defaultValue": ""
+                },
+                {
+                    "key": "domain",
+                    "label": "Domain",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "Water",
+                            "value": "Water"
+                        },
+                        {
+                            "label": "Integration",
+                            "value": "Integration"
+                        },
+                        {
+                            "label": "Building",
+                            "value": "Building"
+                        }
+                    ],
+                    "defaultValue": ""
+                },
+                {
+                    "key": "sensor",
+                    "label": "Sensor",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "Flow Sensor",
+                            "value": "Flow Sensor"
+                        },
+                        {
+                            "label": "Pipe",
+                            "value": "Pipe"
+                        },
+                        {
+                            "label": "Tank",
+                            "value": "Tank"
+                        }
+                    ],
+                    "defaultValue": ""
+                },
+                {
+                    "key": "sourceType",
+                    "label": "Source Type",
+                    "dataType": "radio",
+                    "options": [
+                        {
+                            "label": "Device",
+                            "value": "Device"
+                        },
+                        {
+                            "label": "API",
+                            "value": "API"
+                        }
+                    ],
+                    "defaultValue": ""
+                },
+                {
+                    "key": "processGroup",
+                    "label": "Process Group",
+                    "dataType": "text",
+                    "placeholder": "Enter process group",
+                    "defaultValue": ""
+                }
+            ]
+        },
+        {
+            "name": "ConsumeKafka 2.8.0",
+            "type": "Input",
+            "aliasName": "Stream Receiver",
+            "ports": {
+                "typeId": 1,
+                "type": "output",
+                "noOfPorts": 1
+            },
+            "properties": [
+                {
+                    "key": "Topics",
+                    "label": "Topics",
+                    "dataType": "text",
+                    "placeholder": "Enter topic names (comma-separated)",
+                    "description": "The Kafka topic names to consume from (comma-separated list or pattern based on Topic Format)",
+                    "required": true,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Topic Format",
+                    "label": "Topic Format",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "names",
+                            "value": "names"
+                        },
+                        {
+                            "label": "pattern",
+                            "value": "pattern"
+                        }
+                    ],
+                    "description": "Specifies whether the Topic Name(s) provided are a comma-separated list of names or a single regular expression pattern",
+                    "required": true,
+                    "defaultValue": "names"
+                },
+                {
+                    "key": "Kafka Connection Service",
+                    "label": "Kafka Connection Service",
+                    "dataType": "controllerService",
+                    "controllerServiceType": "org.apache.nifi.kafka.service.api.KafkaConnectionService",
+                    "placeholder": "Select Kafka Connection Service",
+                    "description": "Specifies the Kafka Connection Service to use for connecting to Kafka brokers",
+                    "required": true,
+                    "defaultValue": "Kafka3ConnectionService"
+                },
+                {
+                    "key": "Group ID",
+                    "label": "Group ID",
+                    "dataType": "text",
+                    "placeholder": "Enter group id",
+                    "description": "The Kafka Consumer Group ID to use",
+                    "required": true,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": false
+                },
+                {
+                    "key": "Commit Offsets",
+                    "label": "Commit Offsets",
+                    "dataType": "boolean",
+                    "options": [
+                        {
+                            "label": "true",
+                            "value": "true"
+                        },
+                        {
+                            "label": "false",
+                            "value": "false"
+                        }
+                    ],
+                    "description": "Specifies whether to commit offsets to Kafka after processing",
+                    "required": true,
+                    "defaultValue": "true"
+                },
+                {
+                    "key": "Max Uncommitted Size",
+                    "label": "Max Uncommitted Size",
+                    "dataType": "integer",
+                    "placeholder": "Enter maximum number",
+                    "description": "Maximum number of FlowFiles to be processed without committing offsets",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": false
+                },
+                {
+                    "key": "Max Uncommitted Time",
+                    "label": "Max Uncommitted Time",
+                    "dataType": "text",
+                    "placeholder": "Enter time (e.g., 100 millis)",
+                    "description": "Maximum time to wait before committing offsets",
+                    "required": true,
+                    "defaultValue": "100 millis",
+                    "expressionLanguageSupported": false
+                },
+                {
+                    "key": "Processing Strategy",
+                    "label": "Processing Strategy",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "FLOW_FILE",
+                            "value": "FLOW_FILE"
+                        },
+                        {
+                            "label": "DEMARCATOR",
+                            "value": "DEMARCATOR"
+                        },
+                        {
+                            "label": "RECORD",
+                            "value": "RECORD"
+                        }
+                    ],
+                    "description": "Strategy for processing Kafka messages",
+                    "required": true,
+                    "defaultValue": "FLOW_FILE"
+                },
+                {
+                    "key": "Output Strategy",
+                    "label": "Output Strategy",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "Use Content as Value",
+                            "value": "USE_VALUE"
+                        },
+                        {
+                            "label": "Use Wrapper",
+                            "value": "USE_WRAPPER"
+                        },
+                        {
+                            "label": "Inject Metadata",
+                            "value": "INJECT_METADATA"
+                        },
+                        {
+                            "label": "Inject Offset",
+                            "value": "INJECT_OFFSET"
+                        }
+                    ],
+                    "description": "Strategy for outputting Kafka messages when using Record processing",
+                    "required": true,
+                    "defaultValue": "USE_VALUE"
+                },
+                {
+                    "key": "Separate By Key",
+                    "label": "Separate By Key",
+                    "dataType": "boolean",
+                    "options": [
+                        {
+                            "label": "true",
+                            "value": "true"
+                        },
+                        {
+                            "label": "false",
+                            "value": "false"
+                        }
+                    ],
+                    "description": "If true, FlowFiles will be created for messages with unique message keys",
+                    "required": true,
+                    "defaultValue": "false"
+                },
+                {
+                    "key": "Key Format",
+                    "label": "Key Format",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "Byte Array",
+                            "value": "byte-array"
+                        },
+                        {
+                            "label": "Record",
+                            "value": "record"
+                        },
+                        {
+                            "label": "String",
+                            "value": "string"
+                        }
+                    ],
+                    "description": "Format of the Kafka message key",
+                    "required": true,
+                    "defaultValue": "byte-array"
+                },
+                {
+                    "key": "Key Record Reader",
+                    "label": "Key Record Reader",
+                    "dataType": "controllerService",
+                    "controllerServiceType": "org.apache.nifi.serialization.RecordReaderFactory",
+                    "placeholder": "Select Record Reader",
+                    "description": "Record reader for parsing message keys when Key Format is 'record'",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Record Reader",
+                    "label": "Record Reader",
+                    "dataType": "controllerService",
+                    "controllerServiceType": "org.apache.nifi.serialization.RecordReaderFactory",
+                    "placeholder": "Select Record Reader",
+                    "description": "Record reader for parsing message values when Processing Strategy is 'RECORD'",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Record Writer",
+                    "label": "Record Writer",
+                    "dataType": "controllerService",
+                    "controllerServiceType": "org.apache.nifi.serialization.RecordSetWriterFactory",
+                    "placeholder": "Select Record Writer",
+                    "description": "Record writer for output when Processing Strategy is 'RECORD'",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Key Attribute Encoding",
+                    "label": "Key Attribute Encoding",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "UTF-8 Encoded",
+                            "value": "utf-8"
+                        },
+                        {
+                            "label": "Hex Encoded",
+                            "value": "hex"
+                        },
+                        {
+                            "label": "Do Not Add Key as Attribute",
+                            "value": "do-not-add"
+                        }
+                    ],
+                    "description": "Specifies how to encode the message key to the FlowFile attribute",
+                    "required": true,
+                    "defaultValue": "utf-8"
+                },
+                {
+                    "key": "Header Encoding",
+                    "label": "Header Encoding",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "UTF-8",
+                            "value": "UTF-8"
+                        },
+                        {
+                            "label": "UTF-16",
+                            "value": "UTF-16"
+                        },
+                        {
+                            "label": "ISO-8859-1",
+                            "value": "ISO-8859-1"
+                        }
+                    ],
+                    "description": "Encoding for Kafka message headers",
+                    "required": true,
+                    "defaultValue": "UTF-8"
+                },
+                {
+                    "key": "Header Name Pattern",
+                    "label": "Header Name Pattern",
+                    "dataType": "text",
+                    "placeholder": "Enter regex pattern",
+                    "description": "Regular expression pattern for Kafka headers to add as FlowFile attributes",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": false
+                },
+                {
+                    "key": "Header Name Prefix",
+                    "label": "Header Name Prefix",
+                    "dataType": "text",
+                    "placeholder": "Enter prefix",
+                    "description": "Prefix to add to header names when adding as FlowFile attributes",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": false
+                },
+                {
+                    "key": "Message Demarcator",
+                    "label": "Message Demarcator",
+                    "dataType": "text",
+                    "placeholder": "Enter delimiter",
+                    "description": "Specifies the string that should be used to separate messages when multiple messages are written to a single FlowFile",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": false
+                },
+                {
+                    "key": "auto.offset.reset",
+                    "label": "Auto Offset Reset",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "earliest",
+                            "value": "earliest"
+                        },
+                        {
+                            "label": "latest",
+                            "value": "latest"
+                        },
+                        {
+                            "label": "none",
+                            "value": "none"
+                        }
+                    ],
+                    "description": "What to do when there is no initial offset in Kafka or if the current offset does not exist",
+                    "required": true,
+                    "defaultValue": "latest"
+                }
+            ]
+        },
+        {
+            "name": "PublishKafka 2.8.0",
+            "type": "Output",
+            "aliasName": "Stream Publisher",
+            "ports": {
+                "typeId": 2,
+                "type": "output",
+                "noOfPorts": 1
+            },
+            "properties": [
+                {
+                    "key": "Kafka Connection Service",
+                    "label": "Kafka Connection Service",
+                    "dataType": "controllerService",
+                    "controllerServiceType": "org.apache.nifi.kafka.service.api.KafkaConnectionService",
+                    "placeholder": "Select Kafka Connection Service",
+                    "description": "Provides connections to Kafka Broker for publishing Kafka Records",
+                    "required": true,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Topic Name",
+                    "label": "Topic Name",
+                    "dataType": "text",
+                    "placeholder": "Enter topic name",
+                    "description": "Name of the Kafka Topic to which the Processor publishes Kafka Records",
+                    "required": true,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Failure Strategy",
+                    "label": "Failure Strategy",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "Route to Failure",
+                            "value": "Route to Failure"
+                        },
+                        {
+                            "label": "Rollback",
+                            "value": "Rollback"
+                        }
+                    ],
+                    "description": "Specifies how the processor handles a FlowFile if it is unable to publish the data to Kafka",
+                    "required": true,
+                    "defaultValue": "Route to Failure"
+                },
+                {
+                    "key": "acks",
+                    "label": "Delivery Guarantee",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "Guarantee Replicated Delivery",
+                            "value": "all"
+                        },
+                        {
+                            "label": "Guarantee Single Node Delivery",
+                            "value": "1"
+                        },
+                        {
+                            "label": "Best Effort",
+                            "value": "0"
+                        }
+                    ],
+                    "description": "Specifies the requirement for guaranteeing that a message is sent to Kafka. Corresponds to Kafka Client acks property.",
+                    "required": true,
+                    "defaultValue": "all"
+                },
+                {
+                    "key": "compression.type",
+                    "label": "Compression Type",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "none",
+                            "value": "none"
+                        },
+                        {
+                            "label": "gzip",
+                            "value": "gzip"
+                        },
+                        {
+                            "label": "snappy",
+                            "value": "snappy"
+                        },
+                        {
+                            "label": "lz4",
+                            "value": "lz4"
+                        },
+                        {
+                            "label": "zstd",
+                            "value": "zstd"
+                        }
+                    ],
+                    "description": "Specifies the compression strategy for records sent to Kafka. Corresponds to Kafka Client compression.type property.",
+                    "required": true,
+                    "defaultValue": "none"
+                },
+                {
+                    "key": "max.request.size",
+                    "label": "Max Request Size",
+                    "dataType": "text",
+                    "placeholder": "e.g., 1 MB",
+                    "description": "The maximum size of a request in bytes. Corresponds to Kafka Client max.request.size property.",
+                    "required": true,
+                    "defaultValue": "1 MB"
+                },
+                {
+                    "key": "Transactions Enabled",
+                    "label": "Transactions Enabled",
+                    "dataType": "boolean",
+                    "options": [
+                        {
+                            "label": "true",
+                            "value": "true"
+                        },
+                        {
+                            "label": "false",
+                            "value": "false"
+                        }
+                    ],
+                    "description": "Specifies whether to provide transactional guarantees when communicating with Kafka.",
+                    "required": true,
+                    "defaultValue": "true"
+                },
+                {
+                    "key": "Transactional ID Prefix",
+                    "label": "Transactional ID Prefix",
+                    "dataType": "text",
+                    "placeholder": "Enter prefix",
+                    "description": "Specifies the KafkaProducer config transactional.id will be a generated UUID and will be prefixed with the configured string.",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "partitioner.class",
+                    "label": "Partitioner Class",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "DefaultPartitioner",
+                            "value": "org.apache.kafka.clients.producer.internals.DefaultPartitioner"
+                        },
+                        {
+                            "label": "RoundRobinPartitioner",
+                            "value": "org.apache.kafka.clients.producer.RoundRobinPartitioner"
+                        },
+                        {
+                            "label": "Expression Language Partitioner",
+                            "value": "org.apache.nifi.processors.kafka.pubsub.Partitioners.ExpressionLanguagePartitioner"
+                        }
+                    ],
+                    "description": "Specifies which class to use to compute a partition id for a message. Corresponds to Kafka Client partitioner.class property.",
+                    "required": true,
+                    "defaultValue": "org.apache.kafka.clients.producer.internals.DefaultPartitioner"
+                },
+                {
+                    "key": "partition",
+                    "label": "Partition",
+                    "dataType": "text",
+                    "placeholder": "Enter partition",
+                    "description": "Specifies the Kafka Partition destination for Records.",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Message Demarcator",
+                    "label": "Message Demarcator",
+                    "dataType": "text",
+                    "placeholder": "Enter delimiter",
+                    "description": "Specifies the string to use for demarcating multiple messages within a single FlowFile.",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Record Reader",
+                    "label": "Record Reader",
+                    "dataType": "controllerService",
+                    "controllerServiceType": "org.apache.nifi.serialization.RecordReaderFactory",
+                    "placeholder": "Select Record Reader",
+                    "description": "The Record Reader to use for incoming FlowFiles",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Record Writer",
+                    "label": "Record Writer",
+                    "dataType": "controllerService",
+                    "controllerServiceType": "org.apache.nifi.serialization.RecordSetWriterFactory",
+                    "placeholder": "Select Record Writer",
+                    "description": "The Record Writer to use in order to serialize the data before sending to Kafka",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Publish Strategy",
+                    "label": "Publish Strategy",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "Use Content as Record Value",
+                            "value": "USE_VALUE"
+                        },
+                        {
+                            "label": "Use Wrapper",
+                            "value": "USE_WRAPPER"
+                        }
+                    ],
+                    "description": "The format used to publish the incoming FlowFile record to Kafka.",
+                    "required": true,
+                    "defaultValue": "USE_VALUE"
+                },
+                {
+                    "key": "Message Key Field",
+                    "label": "Message Key Field",
+                    "dataType": "text",
+                    "placeholder": "Enter field name",
+                    "description": "The name of a field in the Input Records that should be used as the Key for the Kafka message.",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "FlowFile Attribute Header Pattern",
+                    "label": "FlowFile Attribute Header Pattern",
+                    "dataType": "text",
+                    "placeholder": "Enter regex pattern",
+                    "description": "A Regular Expression that is matched against all FlowFile attribute names. Any attribute whose name matches the pattern will be added to the Kafka messages as a Header.",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Header Encoding",
+                    "label": "Header Encoding",
+                    "dataType": "text",
+                    "placeholder": "UTF-8",
+                    "description": "For any attribute that is added as a Kafka Record Header, this property indicates the Character Encoding to use for serializing the headers.",
+                    "required": true,
+                    "defaultValue": "UTF-8",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Kafka Key",
+                    "label": "Kafka Key",
+                    "dataType": "text",
+                    "placeholder": "Enter message key",
+                    "description": "The Key to use for the Message. If not specified, the FlowFile attribute 'kafka.key' is used as the message key, if it is present.",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Kafka Key Attribute Encoding",
+                    "label": "Kafka Key Attribute Encoding",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "UTF-8 Encoded",
+                            "value": "utf-8"
+                        },
+                        {
+                            "label": "Hex Encoded",
+                            "value": "hex"
+                        },
+                        {
+                            "label": "Do Not Add Key as Attribute",
+                            "value": "do-not-add"
+                        }
+                    ],
+                    "description": "FlowFiles that are emitted have an attribute named 'kafka.key'. This property dictates how the value of the attribute should be encoded.",
+                    "required": true,
+                    "defaultValue": "utf-8"
+                },
+                {
+                    "key": "Record Key Writer",
+                    "label": "Record Key Writer",
+                    "dataType": "controllerService",
+                    "controllerServiceType": "org.apache.nifi.serialization.RecordSetWriterFactory",
+                    "placeholder": "Select Record Writer",
+                    "description": "The Record Key Writer to use for outgoing FlowFiles",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Record Metadata Strategy",
+                    "label": "Record Metadata Strategy",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "Metadata From Record",
+                            "value": "FROM_RECORD"
+                        },
+                        {
+                            "label": "Use Configured Values",
+                            "value": "FROM_PROPERTIES"
+                        }
+                    ],
+                    "description": "Specifies whether the Record's metadata (topic and partition) should come from the Record's metadata field or if it should come from the configured Topic Name and Partition / Partitioner class properties",
+                    "required": true,
+                    "defaultValue": "FROM_PROPERTIES"
+                }
+            ]
+        },
+        {
+            "name": "ConsumeMQTT 2.8.0",
+            "type": "Input",
+            "aliasName": "MQTT Receiver",
+            "ports": {
+                "typeId": 2,
+                "type": "output",
+                "noOfPorts": 1
+            },
+            "properties": [
+                {
+                    "key": "Broker URI",
+                    "label": "Broker URI",
+                    "dataType": "text",
+                    "placeholder": "Enter broker URI (e.g., tcp://host:port)",
+                    "description": "The URI(s) to use to connect to the MQTT broker",
+                    "required": true,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "MQTT Specification Version",
+                    "label": "MQTT Specification Version",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "v3 AUTO",
+                            "value": "0"
+                        },
+                        {
+                            "label": "v5.0",
+                            "value": "5"
+                        },
+                        {
+                            "label": "v3.1.1",
+                            "value": "4"
+                        },
+                        {
+                            "label": "v3.1.0",
+                            "value": "3"
+                        }
+                    ],
+                    "required": true,
+                    "defaultValue": "0"
+                },
+                {
+                    "key": "Username",
+                    "label": "Username",
+                    "dataType": "text",
+                    "placeholder": "Enter username",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Password",
+                    "label": "Password",
+                    "dataType": "password",
+                    "placeholder": "Enter password",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "SSL Context Service",
+                    "label": "SSL Context Service",
+                    "dataType": "controllerService",
+                    "controllerServiceType": "org.apache.nifi.ssl.SSLContextService",
+                    "placeholder": "Select SSL Context Service",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Session State",
+                    "label": "Session State",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "Clean Session",
+                            "value": "true"
+                        },
+                        {
+                            "label": "Resume Session",
+                            "value": "false"
+                        }
+                    ],
+                    "required": true,
+                    "defaultValue": "true"
+                },
+                {
+                    "key": "Session Expiry Interval",
+                    "label": "Session Expiry Interval",
+                    "dataType": "text",
+                    "placeholder": "e.g., 24 hrs",
+                    "required": false,
+                    "defaultValue": "24 hrs"
+                },
+                {
+                    "key": "Client ID",
+                    "label": "Client ID",
+                    "dataType": "text",
+                    "placeholder": "Enter client ID",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Group ID",
+                    "label": "Group ID",
+                    "dataType": "text",
+                    "placeholder": "Enter group ID",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Topic Filter",
+                    "label": "Topic Filter",
+                    "dataType": "text",
+                    "placeholder": "Enter topic filter",
+                    "required": true,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Quality of Service",
+                    "label": "Quality of Service",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "0 - At most once",
+                            "value": "0"
+                        },
+                        {
+                            "label": "1 - At least once",
+                            "value": "1"
+                        },
+                        {
+                            "label": "2 - Exactly once",
+                            "value": "2"
+                        }
+                    ],
+                    "required": true,
+                    "defaultValue": "0"
+                },
+                {
+                    "key": "Record Reader",
+                    "label": "Record Reader",
+                    "dataType": "controllerService",
+                    "controllerServiceType": "org.apache.nifi.serialization.RecordReaderFactory",
+                    "placeholder": "Select Record Reader",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Record Writer",
+                    "label": "Record Writer",
+                    "dataType": "controllerService",
+                    "controllerServiceType": "org.apache.nifi.serialization.RecordSetWriterFactory",
+                    "placeholder": "Select Record Writer",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Add Attributes as Fields",
+                    "label": "Add Attributes as Fields",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "true",
+                            "value": "true"
+                        },
+                        {
+                            "label": "false",
+                            "value": "false"
+                        }
+                    ],
+                    "required": true,
+                    "defaultValue": "true"
+                },
+                {
+                    "key": "Message Demarcator",
+                    "label": "Message Demarcator",
+                    "dataType": "text",
+                    "placeholder": "Enter delimiter",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Connection Timeout",
+                    "label": "Connection Timeout",
+                    "dataType": "integer",
+                    "placeholder": "Enter seconds",
+                    "required": false,
+                    "defaultValue": "30"
+                },
+                {
+                    "key": "Keep Alive",
+                    "label": "Keep Alive",
+                    "dataType": "integer",
+                    "placeholder": "Enter seconds",
+                    "required": false,
+                    "defaultValue": "60"
+                },
+                {
+                    "key": "Last Will Message",
+                    "label": "Last Will Message",
+                    "dataType": "text",
+                    "placeholder": "Enter message",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Last Will Topic",
+                    "label": "Last Will Topic",
+                    "dataType": "text",
+                    "placeholder": "Enter topic",
+                    "required": true,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Last Will Retain",
+                    "label": "Last Will Retain",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "true",
+                            "value": "true"
+                        },
+                        {
+                            "label": "false",
+                            "value": "false"
+                        }
+                    ],
+                    "required": true,
+                    "defaultValue": "false"
+                },
+                {
+                    "key": "Last Will QoS Level",
+                    "label": "Last Will QoS Level",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "0 - At most once",
+                            "value": "0"
+                        },
+                        {
+                            "label": "1 - At least once",
+                            "value": "1"
+                        },
+                        {
+                            "label": "2 - Exactly once",
+                            "value": "2"
+                        }
+                    ],
+                    "required": true,
+                    "defaultValue": "0"
+                },
+                {
+                    "key": "Max Queue Size",
+                    "label": "Max Queue Size",
+                    "dataType": "integer",
+                    "placeholder": "Enter maximum messages",
+                    "required": true,
+                    "defaultValue": ""
+                }
+            ]
+        },
+        {
+            "name": "GenerateFlowFile 2.8.0",
+            "type": "Input",
+            "aliasName": "Test Data",
+            "ports": {
+                "typeId": 1,
+                "type": "output",
+                "noOfPorts": 1
+            },
+            "properties": [
+                {
+                    "key": "File Size",
+                    "label": "File Size",
+                    "dataType": "text",
+                    "placeholder": "e.g., 0B, 1KB, 5MB",
+                    "description": "The size of the file that will be used",
+                    "required": true,
+                    "defaultValue": "0B",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Batch Size",
+                    "label": "Batch Size",
+                    "dataType": "number",
+                    "placeholder": "Enter batch size",
+                    "description": "The number of FlowFiles to be transferred in each invocation",
+                    "required": true,
+                    "defaultValue": "1"
+                },
+                {
+                    "key": "Data Format",
+                    "label": "Data Format",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "Binary",
+                            "value": "Binary"
+                        },
+                        {
+                            "label": "Text",
+                            "value": "Text"
+                        }
+                    ],
+                    "description": "Specifies whether the data should be Text or Binary",
+                    "required": true,
+                    "defaultValue": "Text"
+                },
+                {
+                    "key": "Unique FlowFiles",
+                    "label": "Unique FlowFiles",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "true",
+                            "value": "true"
+                        },
+                        {
+                            "label": "false",
+                            "value": "false"
+                        }
+                    ],
+                    "description": "If true, each FlowFile that is generated will be unique.",
+                    "required": true,
+                    "defaultValue": "false"
+                },
+                {
+                    "key": "Custom Text",
+                    "label": "Custom Text",
+                    "dataType": "textarea",
+                    "placeholder": "Enter custom text content",
+                    "description": "Custom text to be used as content of the generated FlowFiles",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Character Set",
+                    "label": "Character Set",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "UTF-8",
+                            "value": "UTF-8"
+                        },
+                        {
+                            "label": "UTF-16",
+                            "value": "UTF-16"
+                        },
+                        {
+                            "label": "ISO-8859-1",
+                            "value": "ISO-8859-1"
+                        }
+                    ],
+                    "description": "Specifies the character set to use when writing the bytes of Custom Text",
+                    "required": true,
+                    "defaultValue": "UTF-8"
+                },
+                {
+                    "key": "Mime Type",
+                    "label": "Mime Type",
+                    "dataType": "text",
+                    "placeholder": "e.g., application/json",
+                    "description": "Specifies the value to set for the \"mime.type\" attribute",
+                    "required": false,
+                    "defaultValue": ""
+                }
+            ]
+        },
+        {
+            "name": "ExecuteGroovyScript 2.8.0",
+            "type": "Transformation",
+            "aliasName": "Groovy Script",
+            "ports": {
+                "typeId": 3,
+                "type": "output/input",
+                "noOfPorts": 1
+            },
+            "properties": [
+                {
+                    "key": "Script File",
+                    "label": "Script File",
+                    "dataType": "text",
+                    "placeholder": "Enter script file path",
+                    "description": "Path to script file to execute. Only one of Script File or Script Body may be used",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Script Body",
+                    "label": "Script Body",
+                    "dataType": "textarea",
+                    "placeholder": "Enter groovy script here",
+                    "description": "Body of script to execute. Only one of Script File or Script Body may be used",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Failure Strategy",
+                    "label": "Failure Strategy",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "rollback",
+                            "value": "rollback"
+                        },
+                        {
+                            "label": "transfer to failure",
+                            "value": "transfer to failure"
+                        }
+                    ],
+                    "description": "What to do with unhandled exceptions.",
+                    "required": true,
+                    "defaultValue": "rollback"
+                },
+                {
+                    "key": "Additional Classpath",
+                    "label": "Additional Classpath",
+                    "dataType": "text",
+                    "placeholder": "Enter additional classpath",
+                    "description": "Classpath list separated by semicolon or comma.",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                }
+            ]
+        },
+        {
+            "name": "ConvertRecord 2.8.0",
+            "type": "Transformation",
+            "aliasName": "Data Converter",
+            "ports": {
+                "typeId": 2,
+                "type": "input",
+                "noOfPorts": 1
+            },
+            "properties": [
+                {
+                    "key": "Record Reader",
+                    "label": "Record Reader",
+                    "dataType": "controllerService",
+                    "controllerServiceType": "org.apache.nifi.serialization.RecordReaderFactory",
+                    "placeholder": "Select Record Reader",
+                    "description": "Specifies the Controller Service to use for reading incoming data",
+                    "required": true,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Record Writer",
+                    "label": "Record Writer",
+                    "dataType": "controllerService",
+                    "controllerServiceType": "org.apache.nifi.serialization.RecordSetWriterFactory",
+                    "placeholder": "Select Record Writer",
+                    "description": "Specifies the Controller Service to use for writing out the records",
+                    "required": true,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Include Zero Record FlowFiles",
+                    "label": "Include Zero Record FlowFiles",
+                    "dataType": "boolean",
+                    "options": [
+                        "true",
+                        "false"
+                    ],
+                    "description": "When converting an incoming FlowFile, if the conversion results in no data, this property specifies whether or not a FlowFile will be sent to the corresponding relationship",
+                    "required": true,
+                    "defaultValue": "true"
+                }
+            ]
+        },
+        {
+            "name": "EvaluateJsonPath 2.8.0",
+            "type": "Transformation",
+            "aliasName": "JSON Extractor",
+            "ports": {
+                "typeId": 2,
+                "type": "input",
+                "noOfPorts": 1
+            },
+            "properties": [
+                {
+                    "key": "Destination",
+                    "label": "Destination",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "flowfile-content",
+                            "value": "flowfile-content"
+                        },
+                        {
+                            "label": "flowfile-attribute",
+                            "value": "flowfile-attribute"
+                        }
+                    ],
+                    "description": "Indicates whether the results of the JsonPath evaluation are written to the FlowFile content or a FlowFile attribute; if using attribute, must specify the Attribute Name property. If set to flowfile-content, only one JsonPath may be specified, and the property name is ignored.",
+                    "required": true,
+                    "defaultValue": "flowfile-content"
+                },
+                {
+                    "key": "Return Type",
+                    "label": "Return Type",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "auto-detect",
+                            "value": "auto-detect"
+                        },
+                        {
+                            "label": "json",
+                            "value": "json"
+                        },
+                        {
+                            "label": "scalar",
+                            "value": "scalar"
+                        }
+                    ],
+                    "description": "Indicates the desired return type of the JSON Path expressions. Selecting 'auto-detect' will set the return type to 'json' for a Destination of 'flowfile-content', and 'scalar' for a Destination of 'flowfile-attribute'.",
+                    "required": true,
+                    "defaultValue": "auto-detect"
+                },
+                {
+                    "key": "Path Not Found Behavior",
+                    "label": "Path Not Found Behavior",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "warn",
+                            "value": "warn"
+                        },
+                        {
+                            "label": "ignore",
+                            "value": "ignore"
+                        },
+                        {
+                            "label": "skip",
+                            "value": "skip"
+                        }
+                    ],
+                    "description": "Indicates how to handle missing JSON path expressions when destination is set to 'flowfile-attribute'. Selecting 'warn' will generate a warning when a JSON path expression is not found. Selecting 'skip' will omit attributes for any unmatched JSON path expressions.",
+                    "required": true,
+                    "defaultValue": "ignore"
+                },
+                {
+                    "key": "Null Value Representation",
+                    "label": "Null Value Representation",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "the string 'null'",
+                            "value": "the string 'null'"
+                        },
+                        {
+                            "label": "empty string",
+                            "value": "empty string"
+                        }
+                    ],
+                    "description": "Indicates the desired representation of JSON Path expressions resulting in a null value.",
+                    "required": true,
+                    "defaultValue": "empty string"
+                },
+                {
+                    "key": "Max String Length",
+                    "label": "Max String Length",
+                    "dataType": "text",
+                    "placeholder": "Enter maximum length (e.g., 20 MB)",
+                    "description": "The maximum allowed length of a string value when parsing the JSON document",
+                    "required": true,
+                    "defaultValue": "20 MB"
+                }
+            ]
+        },
+        {
+            "name": "LogAttribute 2.8.0",
+            "type": "Utility",
+            "aliasName": "Log Attribute",
+            "ports": {
+                "typeId": 2,
+                "type": "input",
+                "noOfPorts": 1
+            },
+            "properties": [
+                {
+                    "key": "Log Level",
+                    "label": "Log Level",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "trace",
+                            "value": "trace"
+                        },
+                        {
+                            "label": "debug",
+                            "value": "debug"
+                        },
+                        {
+                            "label": "info",
+                            "value": "info"
+                        },
+                        {
+                            "label": "warn",
+                            "value": "warn"
+                        },
+                        {
+                            "label": "error",
+                            "value": "error"
+                        }
+                    ],
+                    "description": "The Log Level to use when logging the Attributes",
+                    "required": true,
+                    "defaultValue": "info"
+                },
+                {
+                    "key": "Log Payload",
+                    "label": "Log Payload",
+                    "dataType": "boolean",
+                    "options": [
+                        "true",
+                        "false"
+                    ],
+                    "description": "If true, the FlowFile's payload will be logged, in addition to its attributes; otherwise, just the Attributes will be logged.",
+                    "required": true,
+                    "defaultValue": "false"
+                },
+                {
+                    "key": "Attributes to Log",
+                    "label": "Attributes to Log",
+                    "dataType": "text",
+                    "placeholder": "e.g., attr1, attr2",
+                    "description": "A comma-separated list of Attributes to Log. If not specified, all attributes will be logged unless `Attributes to Log by Regular Expression` is modified. There's an AND relationship between the two properties.",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Attributes to Log Regular Expression",
+                    "label": "Attributes to Log Regular Expression",
+                    "dataType": "text",
+                    "placeholder": "Enter regex (e.g., .*)",
+                    "description": "A regular expression indicating the Attributes to Log. If not specified, all attributes will be logged unless `Attributes to Log` is modified. There's an AND relationship between the two properties.",
+                    "required": false,
+                    "defaultValue": ".*"
+                },
+                {
+                    "key": "Attributes to Ignore",
+                    "label": "Attributes to Ignore",
+                    "dataType": "text",
+                    "placeholder": "e.g., ignore1, ignore2",
+                    "description": "A comma-separated list of Attributes to ignore. If not specified, no attributes will be ignored unless `Attributes to Ignore by Regular Expression` is modified. There's an OR relationship between the two properties.",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Attributes to Ignore Regular Expression",
+                    "label": "Attributes to Ignore Regular Expression",
+                    "dataType": "text",
+                    "placeholder": "Enter regex",
+                    "description": "A regular expression indicating the Attributes to Ignore. If not specified, no attributes will be ignored unless `Attributes to Ignore` is modified. There's an OR relationship between the two properties.",
+                    "required": false,
+                    "defaultValue": ""
+                },
+                {
+                    "key": "Log FlowFile Properties",
+                    "label": "Log FlowFile Properties",
+                    "dataType": "boolean",
+                    "options": [
+                        {
+                            "label": "true",
+                            "value": "true"
+                        },
+                        {
+                            "label": "false",
+                            "value": "false"
+                        }
+                    ],
+                    "description": "Specifies whether or not to log FlowFile \"properties\", such as Entry Date, Lineage Start Date, and content size",
+                    "required": true,
+                    "defaultValue": "true"
+                },
+                {
+                    "key": "Output Format",
+                    "label": "Output Format",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "Line per Attribute",
+                            "value": "Line per Attribute"
+                        },
+                        {
+                            "label": "Single Line",
+                            "value": "Single Line"
+                        }
+                    ],
+                    "description": "Specifies the format to use for logging FlowFile attributes",
+                    "required": true,
+                    "defaultValue": "Line per Attribute"
+                },
+                {
+                    "key": "Log Prefix",
+                    "label": "Log Prefix",
+                    "dataType": "text",
+                    "placeholder": "Enter prefix",
+                    "description": "Log prefix appended to the log lines. It helps to distinguish the output of multiple LogAttribute processors.",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Character Set",
+                    "label": "Character Set",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "UTF-8",
+                            "value": "UTF-8"
+                        },
+                        {
+                            "label": "UTF-16",
+                            "value": "UTF-16"
+                        },
+                        {
+                            "label": "ISO-8859-1",
+                            "value": "ISO-8859-1"
+                        }
+                    ],
+                    "description": "The name of the Character Set to use",
+                    "required": true,
+                    "defaultValue": "UTF-8",
+                    "expressionLanguageSupported": true
+                }
+            ]
+        }
+    ]
+}
