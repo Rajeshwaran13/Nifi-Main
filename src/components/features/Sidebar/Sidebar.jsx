@@ -7,6 +7,7 @@ import {
   SearchOutlined,
 } from '@ant-design/icons';
 import { useDnD } from '../Context/DnDContext';
+import { CREATE_DATA_FLOW_DRAG_ITEM } from '../Context/createDataFlowEvents';
 
 const groupProcessors = (processors, searchText) => {
   const query = searchText.trim().toLowerCase();
@@ -38,17 +39,6 @@ export default function Sidebar({ processors, loading, error, onOpenControllerSe
     [processors, searchText]
   );
 
-const dataFlowNodes = useMemo(
-  () =>
-    processors.filter((p) => {
-      const isDataFlow = (p.processorType || '').toLowerCase() === 'dataflow';
-      const matches = p.nodeName.toLowerCase().includes(searchText.trim().toLowerCase());
-      return isDataFlow && matches;
-    }),
-  [processors, searchText]
-);
-
-
   useEffect(() => {
     setOpenSections((prev) => {
       const next = {};
@@ -68,6 +58,9 @@ const dataFlowNodes = useMemo(
     event.dataTransfer.setData('application/reactflow', processor.id);
     event.dataTransfer.effectAllowed = 'move';
   };
+
+  const showCreateDataFlowItem =
+    CREATE_DATA_FLOW_DRAG_ITEM.nodeName.toLowerCase().includes(searchText.trim().toLowerCase());
 
   return (
     <aside className="sidebar-panel" style={{ ...panelBase, width: collapsed ? 52 : 300 }}>
@@ -95,19 +88,17 @@ const dataFlowNodes = useMemo(
           {loading && <div style={infoStyle} className="sidebar-info-text">Loading processors...</div>}
           {error && <div style={errorStyle} className="sidebar-error-text">{error}</div>}
 
-          {dataFlowNodes.map((processor) => (
+          {showCreateDataFlowItem && (
             <div
-              key={processor.id}
+              key={CREATE_DATA_FLOW_DRAG_ITEM.id}
               draggable
-              onDragStart={(e) => onDragStart(e, processor)}
+              onDragStart={(e) => onDragStart(e, CREATE_DATA_FLOW_DRAG_ITEM)}
               style={nodeItem}
               className="sidebar-node-item sidebar-node-item--action"
             >
-              {Number(processor?.ports?.targets || 0) > 0 && <span className="sidebar-port sidebar-port--in" />}
-              <span className="sidebar-node-label">{processor.nodeName}</span>
-              {Number(processor?.ports?.sources || 0) > 0 && <span className="sidebar-port sidebar-port--out" />}
+              <span className="sidebar-node-label">{CREATE_DATA_FLOW_DRAG_ITEM.nodeName}</span>
             </div>
-          ))}
+          )}
 
           {Object.keys(grouped).map((section) => (
             <div key={section} className={`sidebar-section ${openSections[section] ? 'is-open' : ''}`}>

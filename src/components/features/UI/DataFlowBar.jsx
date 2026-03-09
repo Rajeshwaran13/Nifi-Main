@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { requestCreateDataFlow } from '../Context/createDataFlowEvents';
 
-const DataFlowBar = ({ search, setSearch, onCreate }) => {
+const DataFlowBar = ({ search, setSearch }) => {
   const handleExportFlow = () => {
     window.dispatchEvent(new CustomEvent('dataflow:export:request'));
   };
@@ -26,7 +27,7 @@ const DataFlowBar = ({ search, setSearch, onCreate }) => {
 
         <button className="btn btn-secondary dataflow-btn">Run</button>
         <button className="btn btn-secondary dataflow-btn">Save</button>
-        <button className="btn btn-success dataflow-btn" onClick={onCreate}>
+        <button className="btn btn-success dataflow-btn" onClick={() => requestCreateDataFlow()}>
           Create
         </button>
         {/* <button className="btn btn-secondary dataflow-btn" onClick={handleExportFlow}>

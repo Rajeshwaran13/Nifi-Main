@@ -11,10 +11,20 @@ export const FlowNode = ({ id, data }) => {
   const nodeData = data || {};
   const sourceOffsets = toOffsets(nodeData?.ports?.sources || 0);
   const targetOffsets = toOffsets(nodeData?.ports?.targets || 0);
-  const handleColor = nodeData?.handleColor || '#06b6b0 ';
+  const handleColor = nodeData?.handleColor || '#06b6b0';
+  const nodeColor = nodeData?.nodeColor || '#3f3f3f';
+  const borderColor = nodeData?.borderColor || '#898989';
+  const textColor = nodeData?.textColor || '#ffffff';
 
   return (
-    <div className="flow-node">
+    <div
+      className="flow-node"
+      style={{
+        background: nodeColor,
+        borderColor,
+        color: textColor,
+      }}
+    >
       {targetOffsets.map((top, idx) => (
         <Handle
           key={`target-${id}-${idx}`}

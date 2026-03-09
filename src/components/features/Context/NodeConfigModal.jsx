@@ -54,6 +54,18 @@ const toDynamicField = (name) => ({
   __dynamic: true,
 });
 
+const toBooleanValue = (value) => {
+  if (typeof value === 'boolean') return value;
+  const normalized = String(value ?? '').trim().toLowerCase();
+  if (normalized === 'true' || normalized === '1' || normalized === 'yes' || normalized === 'on') {
+    return true;
+  }
+  if (normalized === 'false' || normalized === '0' || normalized === 'no' || normalized === 'off' || normalized === '') {
+    return false;
+  }
+  return Boolean(value);
+};
+
 const buildInitialValues = (node, controllerServiceOptions = []) => {
   if (!node) return {};
   const initialValues = {
@@ -63,6 +75,11 @@ const buildInitialValues = (node, controllerServiceOptions = []) => {
 
   const schema = node.data?.schema || [];
   schema.forEach((field) => {
+    if (field?.type === 'boolean') {
+      initialValues[field.name] = toBooleanValue(initialValues[field.name]);
+      return;
+    }
+
     if (field?.type === 'enum') {
       const rawValue = initialValues[field.name];
       if (!rawValue) return;
@@ -92,8 +109,11 @@ const buildRules = (field) => {
 
   if (field?.required === true) {
     rules.push({
-      required: true,
-      message: `${field.label} is required`,
+      validator: async (_, value) => {
+        if (value === undefined || value === null || value === '') {
+          throw new Error(`${field.label} is required`);
+        }
+      },
     });
   }
 
@@ -123,7 +143,7 @@ const renderField = (field, controllerServiceOptions = []) => {
   if (field.type === 'enum') {
     const selectLabel = field.placeholder || `Select ${field.label}`;
     const options = [
-      { label: selectLabel, value: '', disabled: true },
+      { label: selectLabel, value: '' },
       ...(field.options || []).map(normalizeEnumOption),
     ];
     return <Select {...commonProps} placeholder={selectLabel} options={options} />;
@@ -132,7 +152,7 @@ const renderField = (field, controllerServiceOptions = []) => {
   if (field.type === 'controllerService') {
     const selectLabel = field.placeholder || `Select ${field.label}`;
     const options = [
-      { label: selectLabel, value: '', disabled: true },
+      { label: selectLabel, value: '' },
       ...controllerServiceOptions.map((item) => ({
         label: item.label,
         value: item.value,
@@ -143,6 +163,10 @@ const renderField = (field, controllerServiceOptions = []) => {
 
   if (field.type === 'boolean') {
     return <Switch disabled={!field.editable} />;
+  }
+
+  if (field.type === 'textarea') {
+    return <Input.TextArea {...commonProps} rows={6} />;
   }
 
   if (field.type === 'radio') {

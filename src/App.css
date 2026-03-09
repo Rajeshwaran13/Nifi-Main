@@ -19,11 +19,14 @@ html, body, #root {
 
 
 .flow-node {
+  --node-bg: #3f3f3f;
+  --node-border: #898989;
+  --node-text: #ffffff;
   padding: 0.4rem 1rem;
   border-radius: 0;
-  color: #fff;
-  background: #3f3f3f;
-  border: 2px solid #898989;
+  color: var(--node-text);
+  background: var(--node-bg);
+  border: 2px solid var(--node-border);
   font-size: 22px !important;
   font-weight: 600;
   min-width: 220px;   
@@ -123,6 +126,34 @@ html, body, #root {
   --palette-text: #f2f2f2;
   --palette-subtle-text: #d0d0d0;
   --palette-accent: #06b6b0;
+}
+
+.react-flow__controls {
+  border: 1px solid var(--palette-border) !important;
+  border-radius: 0 !important;
+  overflow: hidden;
+  box-shadow: none !important;
+}
+
+.react-flow__controls-button {
+  background: var(--palette-panel-bg) !important;
+  border-bottom: 1px solid var(--palette-border) !important;
+  color: var(--palette-text) !important;
+  width: 32px;
+  height: 32px;
+}
+
+.react-flow__controls-button:last-child {
+  border-bottom: none !important;
+}
+
+.react-flow__controls-button:hover {
+  background: var(--palette-section-bg) !important;
+}
+
+.react-flow__controls-button svg {
+  fill: currentColor !important;
+  color: currentColor !important;
 }
 
 
@@ -312,7 +343,7 @@ html, body, #root {
 .node-config-modal .ant-input::placeholder,
 .node-config-modal .ant-input-number-input::placeholder,
 .node-config-modal .ant-select-selection-placeholder {
-  color: #ffffff !important;
+  color: #ffffff76 !important;
   opacity: 1 !important;
 }
 
@@ -346,6 +377,12 @@ html, body, #root {
 .node-config-drawer .ant-input-number-handler .anticon,
 .node-config-modal .ant-input-number-handler .anticon {
   color: #ffffff !important;
+}
+
+.node-config-drawer .ant-input-textarea textarea,
+.node-config-modal .ant-input-textarea textarea {
+  min-height: 120px !important;
+  resize: vertical !important;
 }
 
 .node-config-drawer .ant-radio-wrapper,

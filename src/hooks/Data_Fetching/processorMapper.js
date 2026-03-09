@@ -12,11 +12,24 @@ const toFieldType = (dataType, defaultValue) => {
   const normalized = String(dataType || '').toLowerCase();
   if (normalized === 'radio') return 'radio';
   if (normalized === 'controllerservice') return 'controllerService';
+  if (['textarea', 'multiline'].includes(normalized)) return 'textarea';
 
   if (['enum', 'dropdown', 'drop', 'select'].includes(normalized)) return 'enum';
   if (['int', 'integer', 'float', 'double', 'long', 'number'].includes(normalized)) return 'number';
   if (['bool', 'boolean'].includes(normalized)) return 'boolean';
   return 'text';
+};
+
+const toBooleanValue = (value) => {
+  if (typeof value === 'boolean') return value;
+  const normalized = String(value ?? '').trim().toLowerCase();
+  if (normalized === 'true' || normalized === '1' || normalized === 'yes' || normalized === 'on') {
+    return true;
+  }
+  if (normalized === 'false' || normalized === '0' || normalized === 'no' || normalized === 'off' || normalized === '') {
+    return false;
+  }
+  return Boolean(value);
 };
 
 const normalizeToken = (value) =>
@@ -57,19 +70,21 @@ const toSchemaField = ([name, raw]) => {
       isRequiredFlag(raw.isRequired) ||
       isRequiredFlag(raw.mandatory);
 
+    const fieldType = isControllerServiceField(name, raw)
+      ? 'controllerService'
+      : toFieldType(raw.dataType, raw.defaultValue);
+
     return {
       name,
       label: raw.label || raw.displayName || raw.name || name,
-      type: isControllerServiceField(name, raw)
-        ? 'controllerService'
-        : toFieldType(raw.dataType, raw.defaultValue),
+      type: fieldType,
       options: Array.isArray(raw.values)
         ? raw.values
         : Array.isArray(raw.options)
           ? raw.options
           : [],
-      placeholder: raw.placeHolder || '',
-      defaultValue: raw.defaultValue ?? '',
+      placeholder: raw.placeholder || raw.placeHolder || '',
+      defaultValue: fieldType === 'boolean' ? toBooleanValue(raw.defaultValue) : (raw.defaultValue ?? ''),
       visible: raw.visible !== false,
       editable: raw.editable !== false,
       required,
@@ -84,7 +99,7 @@ const toSchemaField = ([name, raw]) => {
     type: toFieldType('', raw),
     options: [],
     placeholder: '',
-    defaultValue: raw ?? '',
+    defaultValue: toFieldType('', raw) === 'boolean' ? toBooleanValue(raw) : (raw ?? ''),
     visible: true,
     editable: true,
     required: false,
@@ -156,6 +171,10 @@ export const normalizeProcessorCatalog = (payload) => {
       processorName: processor.name || processor.processorName || nodeName,
       processorType: processor.processorType || processor.type || 'Others',
       ports: toPortCounts(processor.ports || {}),
+      nodeColor: processor.nodeColor || '#3f3f3f',
+      borderColor: processor.borderColor || '#898989',
+      textColor: processor.textColor || '#ffffff',
+      handleColor: processor.handleColor || '#06b6b0',
       schema,
       defaultValues,
       raw: processor,

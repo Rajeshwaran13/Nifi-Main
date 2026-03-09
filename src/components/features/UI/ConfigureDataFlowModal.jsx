@@ -8,6 +8,14 @@ import {
 } from '../../../services/configureDataFlow';
 
 const TENANT_CODE = 'smartDomain';
+const buildEmptySelectOption = (label) => [{ label, value: '' }];
+const buildRequiredSelectRule = (message) => ({
+  validator: async (_, value) => {
+    if (value === undefined || value ===  null || value ==='') {
+      throw new Error(message);
+    }
+  },
+});
 
 export default function ConfigureDataFlowModal({ open, onClose, onApply }) {
   const [form] = Form.useForm();
@@ -42,9 +50,9 @@ export default function ConfigureDataFlowModal({ open, onClose, onApply }) {
         setSensorOptions(sensors);
         setVendorOptions(vendors);
         form.setFieldsValue({
-          vendor: undefined,
-          domain: undefined,
-          sensor: undefined,
+          vendor: '',
+          domain: '',
+          sensor: '',
           sourceType: undefined,
           processGroup: '',
         });
@@ -76,11 +84,11 @@ export default function ConfigureDataFlowModal({ open, onClose, onApply }) {
         const currentVendor = form.getFieldValue('vendor');
         const exists = vendors.some((v) => v.id === currentVendor);
         if (!exists) {
-          form.setFieldsValue({ vendor: undefined });
+          form.setFieldsValue({ vendor: '' });
         }
       } catch {
         setVendorOptions([]);
-        form.setFieldsValue({ vendor: undefined });
+        form.setFieldsValue({ vendor: '' });
       }
     };
 
@@ -161,27 +169,36 @@ export default function ConfigureDataFlowModal({ open, onClose, onApply }) {
       ]}
     >
       <Form form={form} layout="vertical" requiredMark={false}>
-        <Form.Item name="vendor" label="Vendor" rules={[{ required: true, message: 'Select Vendor' }]}>
+        <Form.Item name="vendor" label="Vendor" rules={[buildRequiredSelectRule('Select Vendor')]}>
           <Select
             placeholder="Select Vendor"
             loading={loading}
-            options={vendorOptions.map((v) => ({ label: v.name, value: v.id }))}
+            options={[
+              ...buildEmptySelectOption('Select Vendor'),
+              ...vendorOptions.map((v) => ({ label: v.name, value: v.id })),
+            ]}
           />
         </Form.Item>
 
-        <Form.Item name="domain" label="Domain" rules={[{ required: true, message: 'Select Domain' }]}>
+        <Form.Item name="domain" label="Domain" rules={[buildRequiredSelectRule('Select Domain')]}>
           <Select
             placeholder="Select Domain"
             loading={loading}
-            options={domainOptions.map((d) => ({ label: d.name, value: d.name }))}
+            options={[
+              ...buildEmptySelectOption('Select Domain'),
+              ...domainOptions.map((d) => ({ label: d.name, value: d.name })),
+            ]}
           />
         </Form.Item>
 
-        <Form.Item name="sensor" label="Sensor" rules={[{ required: true, message: 'Select Sensor' }]}>
+        <Form.Item name="sensor" label="Sensor" rules={[buildRequiredSelectRule('Select Sensor')]}>
           <Select
             placeholder="Select Sensor"
             loading={loading}
-            options={sensorOptions.map((s) => ({ label: s.name, value: s.id }))}
+            options={[
+              ...buildEmptySelectOption('Select Sensor'),
+              ...sensorOptions.map((s) => ({ label: s.name, value: s.id })),
+            ]}
           />
         </Form.Item>
 

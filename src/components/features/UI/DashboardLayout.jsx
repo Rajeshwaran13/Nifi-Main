@@ -1,16 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DataFlowBar from './DataFlowBar';
 import WrappedDnDFlow from '../Context/DnDFlow';
 import ControllerServicesPage from './../Nodes/ControllerServicesPage';
 import ConfigureDataFlowModal from './ConfigureDataFlowModal';
+import {
+  applyCreateDataFlow,
+  CREATE_DATA_FLOW_REQUEST_EVENT,
+} from '../Context/createDataFlowEvents';
 // import TopToolBar from './TopToolBar';
 
 const DashboardLayout = () => {
   const [page, setPage] = useState('flow');
   const [configureModalOpen, setConfigureModalOpen] = useState(false);
 
+  useEffect(() => {
+    const handleCreateRequest = () => {
+      setConfigureModalOpen(true);
+    };
+
+    window.addEventListener(CREATE_DATA_FLOW_REQUEST_EVENT, handleCreateRequest);
+    return () => {
+      window.removeEventListener(CREATE_DATA_FLOW_REQUEST_EVENT, handleCreateRequest);
+    };
+  }, []);
+
   const handleCreateApply = (payload) => {
-    window.dispatchEvent(new CustomEvent('dataflow:create:apply', { detail: payload }));
+    applyCreateDataFlow(payload);
+    setConfigureModalOpen(false);
   };
 
   return (
@@ -18,7 +34,7 @@ const DashboardLayout = () => {
       <div style={rightPaneStyle}>
         {page === 'flow' ? (
           <>
-            <DataFlowBar onCreate={() => setConfigureModalOpen(true)} />
+            <DataFlowBar />
             <div style={canvasStyle}>
               <WrappedDnDFlow onOpenControllerServices={() => setPage('controller-services')} />
             </div>

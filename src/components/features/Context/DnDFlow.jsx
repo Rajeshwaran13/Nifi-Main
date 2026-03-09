@@ -3,11 +3,16 @@ import { ReactFlow, ReactFlowProvider,addEdge,useEdgesState,useNodesState,Contro
 import { DnDProvider, useDnD } from './DnDContext';
 import Sidebar from '../Sidebar/Sidebar';
 import NodeConfigModal from './NodeConfigModal';
-import ConnectionConfigModal from '../Nodes/ConnectionConfigModal';
+
 import { FlowNode } from '../Nodes/FlowNode';
 import { useProcessorCatalog } from '../../../hooks/Data_Fetching/useProcessorCatalog';
 import { deployFlow } from '../../../services/deployService';
 import { fetchControllerServiceOptions } from '../../../services/Contoller_services/controllerServiceTypesService';
+import {
+  CREATE_DATA_FLOW_APPLY_EVENT,
+  isCreateDataFlowDragItem,
+  requestCreateDataFlow,
+} from './createDataFlowEvents';
 import '@xyflow/react/dist/style.css';
 
 const initialNodes = [];
@@ -66,19 +71,11 @@ const buildNodeData = (processor) => ({
   processorType: processor.processorType,
   schema: processor.schema,
   ports: processor.ports,
-  handleColor: '#06b6b0',
+  nodeColor: processor.nodeColor || '#3f3f3f',
+  borderColor: processor.borderColor || '#898989',
+  textColor: processor.textColor || '#ffffff',
+  handleColor: processor.handleColor || '#06b6b0',
   config: { ...processor.defaultValues },
-});
-
-const isDataFlowProcessor = (processor) =>
-  String(processor?.processorType || '').toLowerCase() === 'dataflow';
-
-const createDraftNode = (processor, dropPosition) => ({
-  id: `draft-${processor.id}`,
-  type: 'processorNode',
-  position: dropPosition,
-  data: buildNodeData(processor),
-  __draft: true,
 });
 
 const hasConfigValue = (value) => value !== undefined && value !== null && value !== '';
@@ -157,9 +154,6 @@ const DnDFlow = ({ onOpenControllerServices }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [configMode, setConfigMode] = useState('drawer');
   const [activeNode, setActiveNode] = useState(null);
-  const [pendingConnection, setPendingConnection] = useState(null);
-  const [connectionModalOpen, setConnectionModalOpen] = useState(false);
-  const [connectionNodes, setConnectionNodes] = useState({ from: null, to: null });
   const [nextNodeId, setNextNodeId] = useState(0);
   const [createDataFlow, setCreateDataFlow] = useState(null);
   const [isDeploying, setIsDeploying] = useState(false);
@@ -172,33 +166,14 @@ const DnDFlow = ({ onOpenControllerServices }) => {
 
   const onConnect = useCallback(
     (params) => {
-      const fromNode = nodes.find((n) => n.id === params.source);
-      const toNode = nodes.find((n) => n.id === params.target);
-
-      setPendingConnection(params);
-      setConnectionNodes({ from: fromNode || null, to: toNode || null });
-      setConnectionModalOpen(true);
-    },
-    [nodes]
-  );
-
-  const closeConnectionModal = useCallback(() => {
-    setConnectionModalOpen(false);
-    setPendingConnection(null);
-    setConnectionNodes({ from: null, to: null });
-  }, []);
-
-  const applyConnection = useCallback(
-    (relationship) => {
-      if (!pendingConnection) return;
-      const isFailure = String(relationship || '').toLowerCase() === 'failure';
-      const edgeColor = isFailure ? '#ef4444' : '#06b6b0';
-      const { source, target } = pendingConnection;
+      const edgeColor = '#06b6b0';
+      const relationship = 'success';
+      const { source, target } = params;
 
       setEdges((items) =>
         addEdge(
           {
-            ...pendingConnection,
+            ...params,
             label: relationship,
             data: { relationship },
             style: {
@@ -224,10 +199,8 @@ const DnDFlow = ({ onOpenControllerServices }) => {
           };
         })
       );
-
-      closeConnectionModal();
     },
-    [pendingConnection, setEdges, setNodes, closeConnectionModal]
+    [setEdges, setNodes]
   );
 
   const onDragOver = useCallback((event) => {
@@ -267,9 +240,9 @@ const DnDFlow = ({ onOpenControllerServices }) => {
       );
     };
 
-    window.addEventListener('dataflow:create:apply', handleCreateDataFlowApply);
+    window.addEventListener(CREATE_DATA_FLOW_APPLY_EVENT, handleCreateDataFlowApply);
     return () => {
-      window.removeEventListener('dataflow:create:apply', handleCreateDataFlowApply);
+      window.removeEventListener(CREATE_DATA_FLOW_APPLY_EVENT, handleCreateDataFlowApply);
     };
   }, [setNodes]);
 
@@ -284,7 +257,7 @@ const DnDFlow = ({ onOpenControllerServices }) => {
         y: event.clientY,
       });
 
-      if (!isDataFlowProcessor(selectedProcessor)) {
+      if (!isCreateDataFlowDragItem(selectedProcessor)) {
         const seededNodeData = applyProcessGroupToNodeData(
           buildNodeData(selectedProcessor),
           createDataFlow?.processGroup,
@@ -302,10 +275,7 @@ const DnDFlow = ({ onOpenControllerServices }) => {
         return;
       }
 
-      const draftNode = createDraftNode(selectedProcessor, dropPosition);
-      setActiveNode(draftNode);
-      setConfigMode('modal');
-      setDrawerOpen(true);
+      requestCreateDataFlow({ dropPosition });
       setSelectedProcessor(null);
     },
     [screenToFlowPosition, selectedProcessor, setNodes, setSelectedProcessor, nextNodeId, createDataFlow]
@@ -313,7 +283,7 @@ const DnDFlow = ({ onOpenControllerServices }) => {
 
   const onNodeDoubleClick = useCallback(
     async (_, node) => {
-      if (isDataFlowProcessor(node?.data)) return;
+      if (isCreateDataFlowDragItem(node?.data)) return;
 
       if (isStreamReceiverNodeData(node?.data) || hasControllerServiceField(node?.data?.schema)) {
         await ensureControllerServicesLoaded();
@@ -354,11 +324,6 @@ const DnDFlow = ({ onOpenControllerServices }) => {
       window.dispatchEvent(
         new CustomEvent('dataflow:configure:apply', { detail: configuredPayload })
       );
-
-      if (activeNode.__draft) {
-        closeModal();
-        return;
-      }
 
       setNodes((items) =>
         items.map((node) => {
@@ -513,13 +478,6 @@ const DnDFlow = ({ onOpenControllerServices }) => {
         mode={configMode}
         onSubmit={handleConfigSubmit}
         controllerServiceOptions={controllerServiceOptions}
-      />
-      <ConnectionConfigModal
-        open={connectionModalOpen}
-        fromNode={connectionNodes.from}
-        toNode={connectionNodes.to}
-        onCancel={closeConnectionModal}
-        onApply={applyConnection}
       />
 
     </div>
