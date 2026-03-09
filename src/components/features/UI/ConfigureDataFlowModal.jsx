@@ -82,7 +82,7 @@ export default function ConfigureDataFlowModal({ open, onClose, onApply }) {
         setVendorOptions(vendors);
 
         const currentVendor = form.getFieldValue('vendor');
-        const exists = vendors.some((v) => v.id === currentVendor);
+        const exists = vendors.some((v) => v.code === currentVendor);
         if (!exists) {
           form.setFieldsValue({ vendor: '' });
         }
@@ -96,7 +96,7 @@ export default function ConfigureDataFlowModal({ open, onClose, onApply }) {
   }, [sensorValue, open, form]);
 
   const selectedVendorName =
-    vendorOptions.find((v) => v.id === vendorValue)?.name || '';
+    vendorOptions.find((v) => v.code === vendorValue)?.name || '';
   const selectedDomainName = domainValue || '';
   const selectedSensorName =
     sensorOptions.find((s) => s.id === sensorValue)?.name || '';
@@ -123,7 +123,7 @@ export default function ConfigureDataFlowModal({ open, onClose, onApply }) {
       const values = await form.validateFields();
       const payload = {
         tenantCode: TENANT_CODE,
-        vendorId: values.vendor,
+        vendorCode: values.vendor,
         vendorName: selectedVendorName,
         domainName: values.domain,
         sensorId: values.sensor,
@@ -171,14 +171,14 @@ export default function ConfigureDataFlowModal({ open, onClose, onApply }) {
       <Form form={form} layout="vertical" requiredMark={false}>
         <Form.Item name="vendor" label="Vendor" rules={[buildRequiredSelectRule('Select Vendor')]}>
           <Select
-            placeholder="Select Vendor"
-            loading={loading}
-            options={[
-              ...buildEmptySelectOption('Select Vendor'),
-              ...vendorOptions.map((v) => ({ label: v.name, value: v.id })),
-            ]}
-          />
-        </Form.Item>
+              placeholder="Select Vendor"
+              loading={loading}
+              options={[
+                ...buildEmptySelectOption('Select Vendor'),
+                ...vendorOptions.map((v) => ({ label: v.name, value: v.code })),
+              ]}
+            />
+          </Form.Item>
 
         <Form.Item name="domain" label="Domain" rules={[buildRequiredSelectRule('Select Domain')]}>
           <Select

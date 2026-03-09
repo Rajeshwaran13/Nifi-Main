@@ -3,6 +3,7 @@ import DataFlowBar from './DataFlowBar';
 import WrappedDnDFlow from '../Context/DnDFlow';
 import ControllerServicesPage from './../Nodes/ControllerServicesPage';
 import ConfigureDataFlowModal from './ConfigureDataFlowModal';
+import DataFlowMonitorPage from './DataFlowMonitorPage';
 import {
   applyCreateDataFlow,
   CREATE_DATA_FLOW_REQUEST_EVENT,
@@ -10,8 +11,10 @@ import {
 // import TopToolBar from './TopToolBar';
 
 const DashboardLayout = () => {
-  const [page, setPage] = useState('flow');
+  const [page, setPage] = useState('monitor');
   const [configureModalOpen, setConfigureModalOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [createDataFlow, setCreateDataFlow] = useState(null);
 
   useEffect(() => {
     const handleCreateRequest = () => {
@@ -25,16 +28,32 @@ const DashboardLayout = () => {
   }, []);
 
   const handleCreateApply = (payload) => {
+    setCreateDataFlow(payload);
     applyCreateDataFlow(payload);
     setConfigureModalOpen(false);
+    setPage('flow');
   };
 
   return (
     <div style={pageStyle}>
       <div style={rightPaneStyle}>
-        {page === 'flow' ? (
+        {page === 'monitor' ? (
           <>
-            <DataFlowBar />
+            <DataFlowMonitorPage
+              search={search}
+              onSearchChange={setSearch}
+              onCreate={() => setConfigureModalOpen(true)}
+              createDataFlow={createDataFlow}
+            />
+            <ConfigureDataFlowModal
+              open={configureModalOpen}
+              onClose={() => setConfigureModalOpen(false)}
+              onApply={handleCreateApply}
+            />
+          </>
+        ) : page === 'flow' ? (
+          <>
+            <DataFlowBar showSearch={false} showCreate={false} onBack={() => setPage('monitor')} />
             <div style={canvasStyle}>
               <WrappedDnDFlow onOpenControllerServices={() => setPage('controller-services')} />
             </div>

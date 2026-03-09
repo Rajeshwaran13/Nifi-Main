@@ -1,10 +1,19 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
+  ApartmentOutlined,
+  AppstoreAddOutlined,
+  BranchesOutlined,
+  ControlOutlined,
+  DatabaseOutlined,
   DownOutlined,
+  LoginOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  NodeIndexOutlined,
   RightOutlined,
+  ShareAltOutlined,
   SearchOutlined,
+  TableOutlined,
 } from '@ant-design/icons';
 import { useDnD } from '../Context/DnDContext';
 import { CREATE_DATA_FLOW_DRAG_ITEM } from '../Context/createDataFlowEvents';
@@ -25,6 +34,15 @@ const groupProcessors = (processors, searchText) => {
     acc[section].push(item);
     return acc;
   }, {});
+};
+
+const sectionIcons = {
+  Input: LoginOutlined,
+  Output: ShareAltOutlined,
+  Transformation: BranchesOutlined,
+  Routing: NodeIndexOutlined,
+  Enrichment: DatabaseOutlined,
+  Utility: AppstoreAddOutlined,
 };
 
 
@@ -96,6 +114,7 @@ export default function Sidebar({ processors, loading, error, onOpenControllerSe
               style={nodeItem}
               className="sidebar-node-item sidebar-node-item--action"
             >
+              <TableOutlined className="sidebar-action-icon" />
               <span className="sidebar-node-label">{CREATE_DATA_FLOW_DRAG_ITEM.nodeName}</span>
             </div>
           )}
@@ -107,7 +126,13 @@ export default function Sidebar({ processors, loading, error, onOpenControllerSe
                 className="sidebar-section-header"
                 onClick={() => toggleSection(section)}
               >
-                <span>{section}</span>
+                <span className="sidebar-section-title">
+                  {(() => {
+                    const SectionIcon = sectionIcons[section] || ApartmentOutlined;
+                    return <SectionIcon className="sidebar-section-icon" />;
+                  })()}
+                  <span>{section}</span>
+                </span>
                 {openSections[section] ? <DownOutlined /> : <RightOutlined />}
               </div>
 
@@ -135,6 +160,7 @@ export default function Sidebar({ processors, loading, error, onOpenControllerSe
               className="sidebar-node-item sidebar-node-item--processor"
               style={{ ...nodeItem, width: '100%' }}
             >
+              <ControlOutlined className="sidebar-action-icon" />
               Controller Services
             </button>
           </div>

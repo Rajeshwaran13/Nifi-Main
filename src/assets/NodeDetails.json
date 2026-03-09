@@ -8,11 +8,12 @@
             "borderColor": "#898989",
             "textColor": "#ffffff",
             "handleColor": "#06b6b0",
-            "ports": {
-                "typeId": 1,
-                "type": "output",
-                "noOfPorts": 1
-            },
+            "ports": [
+                {
+                    "typeId": 1,
+                    "name": "success"
+                }
+            ],
             "properties": [
                 {
                     "key": "Topics",
@@ -324,11 +325,20 @@
             "borderColor": "#898989",
             "textColor": "#ffffff",
             "handleColor": "#06b6b0",
-            "ports": {
-                "typeId": 2,
-                "type": "output",
-                "noOfPorts": 1
-            },
+            "ports": [
+                {
+                    "typeId": 2,
+                    "name": "input"
+                },
+                {
+                    "typeId": 1,
+                    "name": "success"
+                },
+                {
+                    "typeId": 1,
+                    "name": "failure"
+                }
+            ],
             "properties": [
                 {
                     "key": "Kafka Connection Service",
@@ -566,7 +576,7 @@
                     "defaultValue": "UTF-8",
                     "expressionLanguageSupported": true
                 },
-                    {
+                {
                     "key": "Kafka Key",
                     "label": "Kafka Key",
                     "dataType": "text",
@@ -636,11 +646,12 @@
             "borderColor": "#898989",
             "textColor": "#ffffff",
             "handleColor": "#06b6b0",
-            "ports": {
-                "typeId": 2,
-                "type": "output",
-                "noOfPorts": 1
-            },
+            "ports": [
+                {
+                    "typeId": 1,
+                    "name": "success"
+                }
+            ],
             "properties": [
                 {
                     "key": "Broker URI",
@@ -907,11 +918,12 @@
             "borderColor": "#898989",
             "textColor": "#ffffff",
             "handleColor": "#06b6b0",
-            "ports": {
-                "typeId": 1,
-                "type": "output",
-                "noOfPorts": 1
-            },
+            "ports": [
+                {
+                    "typeId": 1,
+                    "name": "success"
+                }
+            ],
             "properties": [
                 {
                     "key": "File Size",
@@ -1019,11 +1031,20 @@
             "borderColor": "#898989",
             "textColor": "#ffffff",
             "handleColor": "#06b6b0",
-            "ports": {
-                "typeId": 3,
-                "type": "output/input",
-                "noOfPorts": 1
-            },
+            "ports": [
+                {
+                    "typeId": 2,
+                    "name": "input"
+                },
+                {
+                    "typeId": 1,
+                    "name": "success"
+                },
+                {
+                    "typeId": 1,
+                    "name": "failure"
+                }
+            ],
             "properties": [
                 {
                     "key": "Script File",
@@ -1074,7 +1095,7 @@
                 }
             ]
         },
-         {
+        {
             "name": "ExecuteGroovyScript 2.8.0",
             "type": "Transformation",
             "aliasName": "Data Mapper",
@@ -1082,11 +1103,20 @@
             "borderColor": "#898989",
             "textColor": "#ffffff",
             "handleColor": "#06b6b0",
-            "ports": {
-                "typeId": 3,
-                "type": "output/input",
-                "noOfPorts": 1
-            },
+            "ports": [
+                {
+                    "typeId": 2,
+                    "name": "input"
+                },
+                {
+                    "typeId": 1,
+                    "name": "success"
+                },
+                {
+                    "typeId": 1,
+                    "name": "failure"
+                }
+            ],
             "properties": [
                 {
                     "key": "Script File",
@@ -1145,11 +1175,20 @@
             "borderColor": "#898989",
             "textColor": "#ffffff",
             "handleColor": "#06b6b0",
-            "ports": {
-                "typeId": 2,
-                "type": "input",
-                "noOfPorts": 1
-            },
+            "ports": [
+                {
+                    "typeId": 2,
+                    "name": "input"
+                },
+                {
+                    "typeId": 1,
+                    "name": "success"
+                },
+                {
+                    "typeId": 1,
+                    "name": "failure"
+                }
+            ],
             "properties": [
                 {
                     "key": "Record Reader",
@@ -1193,11 +1232,24 @@
             "borderColor": "#898989",
             "textColor": "#ffffff",
             "handleColor": "#06b6b0",
-            "ports": {
-                "typeId": 3,
-                "type": "input/output",
-                "noOfPorts": 1
-            },
+            "ports": [
+                {
+                    "typeId": 2,
+                    "name": "input"
+                },
+                {
+                    "typeId": 1,
+                    "name": "failure"
+                },
+                {
+                    "typeId": 1,
+                    "name": "matched"
+                },
+                {
+                    "typeId": 1,
+                    "name": "unmatched"
+                }
+            ],
             "properties": [
                 {
                     "key": "Destination",
@@ -1298,11 +1350,16 @@
             "borderColor": "#898989",
             "textColor": "#ffffff",
             "handleColor": "#06b6b0",
-            "ports": {
-                "typeId": 2,
-                "type": "input",
-                "noOfPorts": 1
-            },
+            "ports": [
+                {
+                    "typeId": 2,
+                    "name": "input"
+                },
+                {
+                    "typeId": 1,
+                    "name": "success"
+                }
+            ],
             "properties": [
                 {
                     "key": "Log Level",
@@ -1453,319 +1510,332 @@
                 }
             ]
         },
-         {
-    "name": "PutParquet 2.8.0",
-    "type": "Output",
-    "aliasName": "Put-HDFS",
-    "nodeColor": "#3f3f3f",
-    "borderColor": "#898989",
-    "textColor": "#ffffff",
-    "handleColor": "#06b6b0",
-    "ports": {
-        "typeId": 3,
-        "type": "output/input",
-        "noOfPorts": 1
-    },
-    "properties": [
         {
-            "key": "Hadoop Configuration Resources",
-            "label": "Hadoop Configuration Resources",
-            "dataType": "text",
-            "placeholder": "Enter Hadoop Configuration Resources",
-            "description": "A file or comma separated list of files which contains the Hadoop file system configuration. Without this, Hadoop will search the classpath for a 'core-site.xml' and 'hdfs-site.xml' file or will revert to a default configuration. To use swebhdfs, see 'Additional Details' section of PutHDFS's documentation.",
-            "required": false,
-            "defaultValue": "",
-            "expressionLanguageSupported": true
-        },
-        {
-            "key": "Kerberos User Service",
-            "label": "Kerberos User Service",
-            "dataType": "controllerService",
-            "controllerServiceType": "org.apache.nifi.kerberos.KerberosUserService",
-            "placeholder": "Select Kerberos User Service",
-            "description": "Specifies the Kerberos User Controller Service that should be used for authenticating with Kerberos",
-            "required": false,
-            "defaultValue": "",
-            "expressionLanguageSupported": false
-        },
-        {
-            "key": "Additional Classpath Resources",
-            "label": "Additional Classpath Resources",
-            "dataType": "text",
-            "placeholder": "Enter Additional Classpath Resources",
-            "description": "A comma-separated list of paths to files and/or directories that will be added to the classpath and used for loading native libraries. When specifying a directory, all files with in the directory will be added to the classpath, but further sub-directories will not be included.",
-            "required": false,
-            "defaultValue": "",
-            "expressionLanguageSupported": false
-        },
-        {
-            "key": "Record Reader",
-            "label": "Record Reader",
-            "dataType": "controllerService",
-            "controllerServiceType": "org.apache.nifi.serialization.RecordReaderFactory",
-            "placeholder": "Select Record Reader",
-            "description": "The service for reading records from incoming flow files.",
-            "required": true,
-            "defaultValue": "",
-            "expressionLanguageSupported": false
-        },
-        {
-            "key": "Directory",
-            "label": "Directory",
-            "dataType": "text",
-            "placeholder": "Enter Directory path",
-            "description": "The parent directory to which files should be written. Will be created if it doesn't exist.",
-            "required": true,
-            "defaultValue": "",
-            "expressionLanguageSupported": true
-        },
-        {
-            "key": "Compression Type",
-            "label": "Compression Type",
-            "dataType": "select",
-            "options": [
+            "name": "PutParquet 2.8.0",
+            "type": "Output",
+            "aliasName": "Put-HDFS",
+            "nodeColor": "#3f3f3f",
+            "borderColor": "#898989",
+            "textColor": "#ffffff",
+            "handleColor": "#06b6b0",
+            "ports": [
                 {
-                    "label": "UNCOMPRESSED",
-                    "value": "UNCOMPRESSED"
+                    "typeId": 2,
+                    "name": "input"
                 },
                 {
-                    "label": "SNAPPY",
-                    "value": "SNAPPY"
+                    "typeId": 1,
+                    "name": "success"
                 },
                 {
-                    "label": "GZIP",
-                    "value": "GZIP"
+                    "typeId": 1,
+                    "name": "failure"
                 },
                 {
-                    "label": "LZO",
-                    "value": "LZO"
-                },
-                {
-                    "label": "BROTLI",
-                    "value": "BROTLI"
-                },
-                {
-                    "label": "LZ4",
-                    "value": "LZ4"
-                },
-                {
-                    "label": "ZSTD",
-                    "value": "ZSTD"
-                },
-                {
-                    "label": "LZ4_RAW",
-                    "value": "LZ4_RAW"
+                    "typeId": 1,
+                    "name": "retry"
                 }
             ],
-            "description": "The type of compression for the file being written.",
-            "required": true,
-            "defaultValue": "UNCOMPRESSED",
-            "expressionLanguageSupported": false
-        },
-        {
-            "key": "Overwrite Files",
-            "label": "Overwrite Files",
-            "dataType": "boolean",
-            "options": [
+            "properties": [
                 {
-                    "label": "true",
-                    "value": "true"
+                    "key": "Hadoop Configuration Resources",
+                    "label": "Hadoop Configuration Resources",
+                    "dataType": "text",
+                    "placeholder": "Enter Hadoop Configuration Resources",
+                    "description": "A file or comma separated list of files which contains the Hadoop file system configuration. Without this, Hadoop will search the classpath for a 'core-site.xml' and 'hdfs-site.xml' file or will revert to a default configuration. To use swebhdfs, see 'Additional Details' section of PutHDFS's documentation.",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
                 },
                 {
-                    "label": "false",
-                    "value": "false"
-                }
-            ],
-            "description": "Whether or not to overwrite existing files in the same directory with the same name. When set to false, flow files will be routed to failure when a file exists in the same directory with the same name.",
-            "required": true,
-            "defaultValue": "false",
-            "expressionLanguageSupported": false
-        },
-        {
-            "key": "Permissions Umask",
-            "label": "Permissions Umask",
-            "dataType": "text",
-            "placeholder": "Enter octal umask",
-            "description": "A umask represented as an octal number which determines the permissions of files written to HDFS. This overrides the Hadoop Configuration dfs.umaskmode",
-            "required": false,
-            "defaultValue": "",
-            "expressionLanguageSupported": false
-        },
-        {
-            "key": "Remote Group",
-            "label": "Remote Group",
-            "dataType": "text",
-            "placeholder": "Enter Remote Group",
-            "description": "Changes the group of the HDFS file to this value after it is written. This only works if NiFi is running as a user that has HDFS super user privilege to change group",
-            "required": false,
-            "defaultValue": "",
-            "expressionLanguageSupported": false
-        },
-        {
-            "key": "Remote Owner",
-            "label": "Remote Owner",
-            "dataType": "text",
-            "placeholder": "Enter Remote Owner",
-            "description": "Changes the owner of the HDFS file to this value after it is written. This only works if NiFi is running as a user that has HDFS super user privilege to change owner",
-            "required": false,
-            "defaultValue": "",
-            "expressionLanguageSupported": false
-        },
-        {
-            "key": "Row Group Size",
-            "label": "Row Group Size",
-            "dataType": "text",
-            "placeholder": "Enter Row Group Size (e.g., 128 MB)",
-            "description": "The row group size used by the Parquet writer. The value is specified in the format of <Data Size> <Data Unit> where Data Unit is one of B, KB, MB, GB, TB.",
-            "required": false,
-            "defaultValue": "",
-            "expressionLanguageSupported": true
-        },
-        {
-            "key": "Page Size",
-            "label": "Page Size",
-            "dataType": "text",
-            "placeholder": "Enter Page Size (e.g., 1 MB)",
-            "description": "The page size used by the Parquet writer. The value is specified in the format of <Data Size> <Data Unit> where Data Unit is one of B, KB, MB, GB, TB.",
-            "required": false,
-            "defaultValue": "",
-            "expressionLanguageSupported": true
-        },
-        {
-            "key": "Dictionary Page Size",
-            "label": "Dictionary Page Size",
-            "dataType": "text",
-            "placeholder": "Enter Dictionary Page Size (e.g., 1 MB)",
-            "description": "The dictionary page size used by the Parquet writer. The value is specified in the format of <Data Size> <Data Unit> where Data Unit is one of B, KB, MB, GB, TB.",
-            "required": false,
-            "defaultValue": "",
-            "expressionLanguageSupported": true
-        },
-        {
-            "key": "Max Padding Size",
-            "label": "Max Padding Size",
-            "dataType": "text",
-            "placeholder": "Enter Max Padding Size",
-            "description": "The maximum amount of padding that will be used to align row groups with blocks in the underlying filesystem. If the underlying filesystem is not a block filesystem like HDFS, this has no effect. The value is specified in the format of <Data Size> <Data Unit> where Data Unit is one of B, KB, MB, GB, TB.",
-            "required": false,
-            "defaultValue": "",
-            "expressionLanguageSupported": true
-        },
-        {
-            "key": "Enable Dictionary Encoding",
-            "label": "Enable Dictionary Encoding",
-            "dataType": "boolean",
-            "options": [
-                {
-                    "label": "true",
-                    "value": "true"
+                    "key": "Kerberos User Service",
+                    "label": "Kerberos User Service",
+                    "dataType": "controllerService",
+                    "controllerServiceType": "org.apache.nifi.kerberos.KerberosUserService",
+                    "placeholder": "Select Kerberos User Service",
+                    "description": "Specifies the Kerberos User Controller Service that should be used for authenticating with Kerberos",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": false
                 },
                 {
-                    "label": "false",
-                    "value": "false"
-                }
-            ],
-            "description": "Specifies whether dictionary encoding should be enabled for the Parquet writer",
-            "required": false,
-            "defaultValue": "",
-            "expressionLanguageSupported": false
-        },
-        {
-            "key": "Enable Validation",
-            "label": "Enable Validation",
-            "dataType": "boolean",
-            "options": [
-                {
-                    "label": "true",
-                    "value": "true"
+                    "key": "Additional Classpath Resources",
+                    "label": "Additional Classpath Resources",
+                    "dataType": "text",
+                    "placeholder": "Enter Additional Classpath Resources",
+                    "description": "A comma-separated list of paths to files and/or directories that will be added to the classpath and used for loading native libraries. When specifying a directory, all files with in the directory will be added to the classpath, but further sub-directories will not be included.",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": false
                 },
                 {
-                    "label": "false",
-                    "value": "false"
-                }
-            ],
-            "description": "Specifies whether validation should be enabled for the Parquet writer",
-            "required": false,
-            "defaultValue": "",
-            "expressionLanguageSupported": false
-        },
-        {
-            "key": "Writer Version",
-            "label": "Writer Version",
-            "dataType": "select",
-            "options": [
-                {
-                    "label": "PARQUET_1_0",
-                    "value": "PARQUET_1_0"
+                    "key": "Record Reader",
+                    "label": "Record Reader",
+                    "dataType": "controllerService",
+                    "controllerServiceType": "org.apache.nifi.serialization.RecordReaderFactory",
+                    "placeholder": "Select Record Reader",
+                    "description": "The service for reading records from incoming flow files.",
+                    "required": true,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": false
                 },
                 {
-                    "label": "PARQUET_2_0",
-                    "value": "PARQUET_2_0"
-                }
-            ],
-            "description": "Specifies the version used by Parquet writer",
-            "required": false,
-            "defaultValue": "",
-            "expressionLanguageSupported": false
-        },
-        {
-            "key": "Avro Write Old List Structure",
-            "label": "Avro Write Old List Structure",
-            "dataType": "boolean",
-            "options": [
-                {
-                    "label": "true",
-                    "value": "true"
+                    "key": "Directory",
+                    "label": "Directory",
+                    "dataType": "text",
+                    "placeholder": "Enter Directory path",
+                    "description": "The parent directory to which files should be written. Will be created if it doesn't exist.",
+                    "required": true,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
                 },
                 {
-                    "label": "false",
-                    "value": "false"
-                }
-            ],
-            "description": "Specifies the value for 'parquet.avro.write-old-list-structure' in the underlying Parquet library",
-            "required": true,
-            "defaultValue": "true",
-            "expressionLanguageSupported": false
-        },
-        {
-            "key": "Avro Add List Element Records",
-            "label": "Avro Add List Element Records",
-            "dataType": "boolean",
-            "options": [
-                {
-                    "label": "true",
-                    "value": "true"
+                    "key": "Compression Type",
+                    "label": "Compression Type",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "UNCOMPRESSED",
+                            "value": "UNCOMPRESSED"
+                        },
+                        {
+                            "label": "SNAPPY",
+                            "value": "SNAPPY"
+                        },
+                        {
+                            "label": "GZIP",
+                            "value": "GZIP"
+                        },
+                        {
+                            "label": "LZO",
+                            "value": "LZO"
+                        },
+                        {
+                            "label": "BROTLI",
+                            "value": "BROTLI"
+                        },
+                        {
+                            "label": "LZ4",
+                            "value": "LZ4"
+                        },
+                        {
+                            "label": "ZSTD",
+                            "value": "ZSTD"
+                        },
+                        {
+                            "label": "LZ4_RAW",
+                            "value": "LZ4_RAW"
+                        }
+                    ],
+                    "description": "The type of compression for the file being written.",
+                    "required": true,
+                    "defaultValue": "UNCOMPRESSED",
+                    "expressionLanguageSupported": false
                 },
                 {
-                    "label": "false",
-                    "value": "false"
-                }
-            ],
-            "description": "Specifies the value for 'parquet.avro.add-list-element-records' in the underlying Parquet library",
-            "required": true,
-            "defaultValue": "true",
-            "expressionLanguageSupported": false
-        },
-        {
-            "key": "Remove CRC Files",
-            "label": "Remove CRC Files",
-            "dataType": "boolean",
-            "options": [
-                {
-                    "label": "true",
-                    "value": "true"
+                    "key": "Overwrite Files",
+                    "label": "Overwrite Files",
+                    "dataType": "boolean",
+                    "options": [
+                        {
+                            "label": "true",
+                            "value": "true"
+                        },
+                        {
+                            "label": "false",
+                            "value": "false"
+                        }
+                    ],
+                    "description": "Whether or not to overwrite existing files in the same directory with the same name. When set to false, flow files will be routed to failure when a file exists in the same directory with the same name.",
+                    "required": true,
+                    "defaultValue": "false",
+                    "expressionLanguageSupported": false
                 },
                 {
-                    "label": "false",
-                    "value": "false"
+                    "key": "Permissions Umask",
+                    "label": "Permissions Umask",
+                    "dataType": "text",
+                    "placeholder": "Enter octal umask",
+                    "description": "A umask represented as an octal number which determines the permissions of files written to HDFS. This overrides the Hadoop Configuration dfs.umaskmode",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": false
+                },
+                {
+                    "key": "Remote Group",
+                    "label": "Remote Group",
+                    "dataType": "text",
+                    "placeholder": "Enter Remote Group",
+                    "description": "Changes the group of the HDFS file to this value after it is written. This only works if NiFi is running as a user that has HDFS super user privilege to change group",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": false
+                },
+                {
+                    "key": "Remote Owner",
+                    "label": "Remote Owner",
+                    "dataType": "text",
+                    "placeholder": "Enter Remote Owner",
+                    "description": "Changes the owner of the HDFS file to this value after it is written. This only works if NiFi is running as a user that has HDFS super user privilege to change owner",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": false
+                },
+                {
+                    "key": "Row Group Size",
+                    "label": "Row Group Size",
+                    "dataType": "text",
+                    "placeholder": "Enter Row Group Size (e.g., 128 MB)",
+                    "description": "The row group size used by the Parquet writer. The value is specified in the format of <Data Size> <Data Unit> where Data Unit is one of B, KB, MB, GB, TB.",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Page Size",
+                    "label": "Page Size",
+                    "dataType": "text",
+                    "placeholder": "Enter Page Size (e.g., 1 MB)",
+                    "description": "The page size used by the Parquet writer. The value is specified in the format of <Data Size> <Data Unit> where Data Unit is one of B, KB, MB, GB, TB.",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Dictionary Page Size",
+                    "label": "Dictionary Page Size",
+                    "dataType": "text",
+                    "placeholder": "Enter Dictionary Page Size (e.g., 1 MB)",
+                    "description": "The dictionary page size used by the Parquet writer. The value is specified in the format of <Data Size> <Data Unit> where Data Unit is one of B, KB, MB, GB, TB.",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Max Padding Size",
+                    "label": "Max Padding Size",
+                    "dataType": "text",
+                    "placeholder": "Enter Max Padding Size",
+                    "description": "The maximum amount of padding that will be used to align row groups with blocks in the underlying filesystem. If the underlying filesystem is not a block filesystem like HDFS, this has no effect. The value is specified in the format of <Data Size> <Data Unit> where Data Unit is one of B, KB, MB, GB, TB.",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": true
+                },
+                {
+                    "key": "Enable Dictionary Encoding",
+                    "label": "Enable Dictionary Encoding",
+                    "dataType": "boolean",
+                    "options": [
+                        {
+                            "label": "true",
+                            "value": "true"
+                        },
+                        {
+                            "label": "false",
+                            "value": "false"
+                        }
+                    ],
+                    "description": "Specifies whether dictionary encoding should be enabled for the Parquet writer",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": false
+                },
+                {
+                    "key": "Enable Validation",
+                    "label": "Enable Validation",
+                    "dataType": "boolean",
+                    "options": [
+                        {
+                            "label": "true",
+                            "value": "true"
+                        },
+                        {
+                            "label": "false",
+                            "value": "false"
+                        }
+                    ],
+                    "description": "Specifies whether validation should be enabled for the Parquet writer",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": false
+                },
+                {
+                    "key": "Writer Version",
+                    "label": "Writer Version",
+                    "dataType": "select",
+                    "options": [
+                        {
+                            "label": "PARQUET_1_0",
+                            "value": "PARQUET_1_0"
+                        },
+                        {
+                            "label": "PARQUET_2_0",
+                            "value": "PARQUET_2_0"
+                        }
+                    ],
+                    "description": "Specifies the version used by Parquet writer",
+                    "required": false,
+                    "defaultValue": "",
+                    "expressionLanguageSupported": false
+                },
+                {
+                    "key": "Avro Write Old List Structure",
+                    "label": "Avro Write Old List Structure",
+                    "dataType": "boolean",
+                    "options": [
+                        {
+                            "label": "true",
+                            "value": "true"
+                        },
+                        {
+                            "label": "false",
+                            "value": "false"
+                        }
+                    ],
+                    "description": "Specifies the value for 'parquet.avro.write-old-list-structure' in the underlying Parquet library",
+                    "required": true,
+                    "defaultValue": "true",
+                    "expressionLanguageSupported": false
+                },
+                {
+                    "key": "Avro Add List Element Records",
+                    "label": "Avro Add List Element Records",
+                    "dataType": "boolean",
+                    "options": [
+                        {
+                            "label": "true",
+                            "value": "true"
+                        },
+                        {
+                            "label": "false",
+                            "value": "false"
+                        }
+                    ],
+                    "description": "Specifies the value for 'parquet.avro.add-list-element-records' in the underlying Parquet library",
+                    "required": true,
+                    "defaultValue": "true",
+                    "expressionLanguageSupported": false
+                },
+                {
+                    "key": "Remove CRC Files",
+                    "label": "Remove CRC Files",
+                    "dataType": "boolean",
+                    "options": [
+                        {
+                            "label": "true",
+                            "value": "true"
+                        },
+                        {
+                            "label": "false",
+                            "value": "false"
+                        }
+                    ],
+                    "description": "Specifies whether the corresponding CRC file should be deleted upon successfully writing a Parquet file",
+                    "required": false,
+                    "defaultValue": "false",
+                    "expressionLanguageSupported": false
                 }
-            ],
-            "description": "Specifies whether the corresponding CRC file should be deleted upon successfully writing a Parquet file",
-            "required": false,
-            "defaultValue": "false",
-            "expressionLanguageSupported": false
+            ]
         }
-    ]
-}
     ]
 }

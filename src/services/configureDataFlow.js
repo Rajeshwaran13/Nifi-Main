@@ -82,6 +82,7 @@ const toSensorOption = (item, index) => ({
 
 const toVendorOption = (item, index) => ({
   id: readField(item, ['vendorId', 'id']) ?? index + 1,
+  code: String(readField(item, ['vendorCode', 'code']) ?? '').trim(),
   name: String(readField(item, ['vendorName', 'name', 'label']) ?? '').trim(),
 });
 

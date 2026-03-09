@@ -123,21 +123,62 @@ const normalizeProperties = (properties) => {
   return [];
 };
 
-const toPortCounts = (ports = {}) => {
-  const count = Number(ports.noOfPorts || 1);
-  const safeCount = Number.isFinite(count) && count > 0 ? count : 1;
+const normalizePortEntries = (ports) => {
+  if (Array.isArray(ports)) return ports;
+  if (ports && typeof ports === 'object') return [ports];
+  return [];
+};
 
-  // support both old and new key names
-  const portTypeId = String(ports.portTypeId ?? ports.typeId ?? '');
-  const portType = String(ports.portType ?? ports.type ?? '').toLowerCase();
+const toPortConfig = (ports = {}) => {
+  const entries = normalizePortEntries(ports);
 
-  if (portTypeId === '1') return { sources: safeCount, targets: 0 }; // output only
-  if (portTypeId === '2') return { sources: 0, targets: safeCount }; // input only
-  if (portTypeId === '3') return { sources: safeCount, targets: safeCount }; // both
+  if (entries.length === 0) {
+    return {
+      sources: 0,
+      targets: 0,
+      relationships: [],
+    };
+  }
+
+  const summary = entries.reduce(
+    (acc, port) => {
+      const portTypeId = String(port?.portTypeId ?? port?.typeId ?? '');
+      const portType = String(port?.portType ?? port?.type ?? '').toLowerCase();
+      const portName = String(port?.name || port?.label || '').trim();
+
+      if (portTypeId === '3') {
+        acc.hasSource = true;
+        acc.hasTarget = true;
+        if (portName) {
+          acc.relationships.push(portName);
+        }
+        return acc;
+      }
+
+      if (portTypeId === '1' || portType.includes('output')) {
+        acc.hasSource = true;
+        if (portName) {
+          acc.relationships.push(portName);
+        }
+      }
+
+      if (portTypeId === '2' || portType.includes('input')) {
+        acc.hasTarget = true;
+      }
+
+      return acc;
+    },
+    {
+      hasSource: false,
+      hasTarget: false,
+      relationships: [],
+    }
+  );
 
   return {
-    sources: portType.includes('output') ? safeCount : 0,
-    targets: portType.includes('input') ? safeCount : 0,
+    sources: summary.hasSource ? 1 : 0,
+    targets: summary.hasTarget ? 1 : 0,
+    relationships: summary.relationships,
   };
 };
 
@@ -170,7 +211,7 @@ export const normalizeProcessorCatalog = (payload) => {
       nodeName,
       processorName: processor.name || processor.processorName || nodeName,
       processorType: processor.processorType || processor.type || 'Others',
-      ports: toPortCounts(processor.ports || {}),
+      ports: toPortConfig(processor.ports || {}),
       nodeColor: processor.nodeColor || '#3f3f3f',
       borderColor: processor.borderColor || '#898989',
       textColor: processor.textColor || '#ffffff',
