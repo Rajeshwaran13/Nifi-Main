@@ -23,6 +23,7 @@ const DashboardLayout = () => {
   const [search, setSearch] = useState('');
   const [createDataFlow, setCreateDataFlow] = useState(null);
   const [initialFlowDefinition, setInitialFlowDefinition] = useState(null);
+  const [pendingInitialSave, setPendingInitialSave] = useState(null);
   const saveErrorModalRef = useRef(null);
   const createDataFlowRef = useRef(createDataFlow);
 
@@ -40,6 +41,21 @@ const DashboardLayout = () => {
   useEffect(() => {
     createDataFlowRef.current = createDataFlow;
   }, [createDataFlow]);
+
+  useEffect(() => {
+    if (page !== 'flow' || !pendingInitialSave) return;
+
+    const timer = setTimeout(() => {
+      window.dispatchEvent(
+        new CustomEvent('dataflow:save:request', {
+          detail: { payloadOverride: pendingInitialSave },
+        })
+      );
+      setPendingInitialSave(null);
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [page, pendingInitialSave]);
 
   useEffect(() => {
     const handleSaveError = (event) => {
@@ -113,6 +129,17 @@ const DashboardLayout = () => {
     setInitialFlowDefinition(null);
     applyCreateDataFlow(payload);
     setConfigureModalOpen(false);
+    setPendingInitialSave({
+      metadata: {
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        nodeCount: 0,
+        edgeCount: 0,
+      },
+      createDataFlow: payload ? { ...payload } : null,
+      nodes: [],
+      edges: [],
+    });
     setPage('flow');
   };
 

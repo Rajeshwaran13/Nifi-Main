@@ -94,10 +94,10 @@ export default function useFlowPersistence({
     }
   }, [buildExportPayload, createDataFlow, isDeploying]);
 
-  const handleSaveRequest = useCallback(async () => {
+  const handleSaveRequest = useCallback(async (event) => {
     if (isSaving) return;
 
-    const payload = buildExportPayload();
+    const payload = event?.detail?.payloadOverride || buildExportPayload();
 
     setIsSaving(true);
     try {

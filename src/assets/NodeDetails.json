@@ -1098,7 +1098,7 @@
         {
             "name": "ExecuteGroovyScript 2.8.0",
             "type": "Transformation",
-            "aliasName": "Data Mapper",
+            "aliasName": "Hormonization",
             "nodeColor": "#3f3f3f",
             "borderColor": "#898989",
             "textColor": "#ffffff",

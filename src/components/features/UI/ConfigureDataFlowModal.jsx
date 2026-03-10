@@ -24,6 +24,7 @@ export default function ConfigureDataFlowModal({ open, onClose, onApply }) {
   const [domainOptions, setDomainOptions] = useState([]);
   const [sensorOptions, setSensorOptions] = useState([]);
   const [vendorOptions, setVendorOptions] = useState([]);
+  const [targetEntityOptions, setTargetEntityOptions] = useState([]);
 
   const sensorValue = Form.useWatch('sensor', form);
   const domainValue = Form.useWatch('domain', form);
@@ -43,17 +44,19 @@ export default function ConfigureDataFlowModal({ open, onClose, onApply }) {
     const load = async () => {
       setLoading(true);
       try {
-        const { domains, sensors, vendors } = await fetchConfigureDataFlowOptions({
+        const { domains, sensors, vendors, targetEntities } = await fetchConfigureDataFlowOptions({
           tenantCode: TENANT_CODE,
         });
 
         setDomainOptions(domains);
         setSensorOptions(sensors);
         setVendorOptions(vendors);
+        setTargetEntityOptions(targetEntities || []);
         form.setFieldsValue({
           vendor: '',
           domain: '',
           sensor: '',
+          targetEntity: '',
           sourceType: undefined,
           processGroup: '',
         });
@@ -62,6 +65,7 @@ export default function ConfigureDataFlowModal({ open, onClose, onApply }) {
         setDomainOptions([]);
         setSensorOptions([]);
         setVendorOptions([]);
+        setTargetEntityOptions([]);
       } finally {
         setLoading(false);
       }
@@ -129,6 +133,8 @@ export default function ConfigureDataFlowModal({ open, onClose, onApply }) {
         domainName: values.domain,
         sensorId: values.sensor,
         sensorName: selectedSensorName,
+        // targetEntity: { code: values.targetEntity },
+        targetEntityCode: values.targetEntity,
         sourceType: values.sourceType,
         processGroup: values.processGroup,
         version: 'V',
@@ -203,6 +209,23 @@ export default function ConfigureDataFlowModal({ open, onClose, onApply }) {
           />
         </Form.Item>
 
+        <Form.Item
+          name="targetEntity"
+          label="Target Entity"
+          rules={[buildRequiredSelectRule('Select Target Entity')]}
+        >
+          <Select
+            placeholder="Select Target Entity"
+            loading={loading}
+            showSearch
+            optionFilterProp="label"
+            options={[
+              ...buildEmptySelectOption('Select Target Entity'),
+              ...targetEntityOptions.map((item) => ({ label: item.name, value: item.code })),
+            ]}
+          />
+        </Form.Item>
+ 
         <Form.Item
           name="sourceType"
           label="Source Type"

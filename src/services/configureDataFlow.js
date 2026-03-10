@@ -5,6 +5,7 @@ const BASE_PATH = '/DataFlowService/api/wso2';
 const CATEGORIES_API = `${BASE_PATH}/getCategories`;
 const DEVICE_TYPES_API = `${BASE_PATH}/getDeviceTypes`;
 const VENDORS_API = `${BASE_PATH}/getVendors`;
+const TARGET_ENTITY_API = `${BASE_PATH}/getEntityDetails`;
 
 const postJson = async (url, payload) => {
   const response = await axios.post(url, payload, {
@@ -86,6 +87,22 @@ const toVendorOption = (item, index) => ({
   name: String(readField(item, ['vendorName', 'name', 'label']) ?? '').trim(),
 });
 
+const toTargetEntityOption = (item, index) => {
+  if (typeof item === 'string' || typeof item === 'number') {
+    const code = String(item).trim();
+    return { key: `target-${index}`, name: code, code };
+  }
+
+  if (!item || typeof item !== 'object') {
+    return { key: `target-${index}`, name: '', code: '' };
+  }
+
+  const name = String(readField(item, ['name', 'entityName', 'label']) ?? '').trim();
+  const code = String(readField(item, ['code', 'entityCode', 'value']) ?? '').trim();
+
+  return { key: `target-${index}`, name, code };
+};
+
 export const fetchDomains = async (tenantCode) => {
   const payload = await postJson(CATEGORIES_API, { tenantCode });
   return findArrayDeep(payload, ['categories', 'categoryList', 'data'])
@@ -107,16 +124,37 @@ export const fetchVendors = async ({ tenantCode, deviceTypeId }) => {
     .filter((x) => x.name);
 };
 
+export const fetchTargetEntities = async (tenantCode) => {
+  const response = await axios.get(`${TARGET_ENTITY_API}/${encodeURIComponent(tenantCode)}`, {
+    headers: { accept: 'application/json' },
+  });
+
+  const payload = response?.data;
+  const items = findArrayDeep(payload, ['entities', 'entityDetails', 'data', 'items', 'content']);
+
+  const normalized = items
+    .map(toTargetEntityOption)
+    .filter((x) => x.code && x.name);
+
+  const seen = new Set();
+  return normalized.filter((x) => {
+    if (seen.has(x.code)) return false;
+    seen.add(x.code);
+    return true;
+  });
+};
+
 export const fetchConfigureDataFlowOptions = async ({ tenantCode }) => {
-  const [domains, sensors] = await Promise.all([
+  const [domains, sensors, targetEntities] = await Promise.all([
     fetchDomains(tenantCode),
     fetchSensors(tenantCode),
+    fetchTargetEntities(tenantCode),
   ]);
 
   const selectedSensorId = sensors[0]?.id ?? 1;
   const vendors = await fetchVendors({ tenantCode, deviceTypeId: selectedSensorId });
 
-  return { domains, sensors, vendors };
+  return { domains, sensors, vendors, targetEntities };
 };
 
 const normalizeToken = (value) =>
