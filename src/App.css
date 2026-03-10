@@ -1065,3 +1065,27 @@ html, body, #root {
   border-color: var(--sfc-primary-hover) !important;
   color: #ffffff !important;
 }
+
+/* Node config: label action button (Data Mapper next to Script File) */
+.node-config-row-label__wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.node-config-row-label__action.ant-btn {
+  background: var(--palette-accent, #06b6b0) !important;
+  border-color: var(--palette-accent, #06b6b0) !important;
+  color: #ffffff !important;
+  font-weight: 400 !important;
+  margin-top: 0% !important;
+  margin-bottom: 10px !important;
+}
+
+.node-config-row-label__action.ant-btn:hover,
+.node-config-row-label__action.ant-btn:focus {
+  background: #089e99 !important;
+  border-color: #089e99 !important;
+  color: #ffffff !important;
+}

@@ -67,6 +67,7 @@ export default function useDataFlowBuilder(initialCreateDataFlow = null, initial
     processors,
     loading,
     error,
+    createDataFlow,
     ...flow,
   };
 }

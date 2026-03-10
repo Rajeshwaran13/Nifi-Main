@@ -133,7 +133,7 @@ export default function ConfigureDataFlowModal({ open, onClose, onApply }) {
         domainName: values.domain,
         sensorId: values.sensor,
         sensorName: selectedSensorName,
-        // targetEntity: { code: values.targetEntity },
+        targetEntity: { code: values.targetEntity },
         targetEntityCode: values.targetEntity,
         sourceType: values.sourceType,
         processGroup: values.processGroup,
@@ -178,19 +178,23 @@ export default function ConfigureDataFlowModal({ open, onClose, onApply }) {
       <Form form={form} layout="vertical" requiredMark={false}>
         <Form.Item name="vendor" label="Vendor" rules={[buildRequiredSelectRule('Select Vendor')]}>
           <Select
-              placeholder="Select Vendor"
-              loading={loading}
-              options={[
-                ...buildEmptySelectOption('Select Vendor'),
-                ...vendorOptions.map((v) => ({ label: v.name, value: v.code })),
-              ]}
-            />
-          </Form.Item>
+            placeholder="Select Vendor"
+            loading={loading}
+            showSearch
+            optionFilterProp="label"
+            options={[
+              ...buildEmptySelectOption('Select Vendor'),
+              ...vendorOptions.map((v) => ({ label: v.name, value: v.code })),
+            ]}
+          />
+        </Form.Item>
 
         <Form.Item name="domain" label="Domain" rules={[buildRequiredSelectRule('Select Domain')]}>
           <Select
             placeholder="Select Domain"
             loading={loading}
+            showSearch
+            optionFilterProp="label"
             options={[
               ...buildEmptySelectOption('Select Domain'),
               ...domainOptions.map((d) => ({ label: d.name, value: d.name })),
@@ -202,6 +206,8 @@ export default function ConfigureDataFlowModal({ open, onClose, onApply }) {
           <Select
             placeholder="Select Sensor"
             loading={loading}
+            showSearch
+            optionFilterProp="label"
             options={[
               ...buildEmptySelectOption('Select Sensor'),
               ...sensorOptions.map((s) => ({ label: s.name, value: s.id })),

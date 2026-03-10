@@ -9,6 +9,7 @@ import {Button,Drawer,Form,
   Switch,
   Radio
 } from 'antd';
+import DataMapperModal from '../DataMapper/DataMapperModal';
 
 const normalizeEnumOption = (option) => {
   if (option && typeof option === 'object' && !Array.isArray(option)) {
@@ -41,6 +42,18 @@ const isEvaluateJsonPathNode = (node) => {
   const processorName = normalizeKey(node?.data?.processorName);
   const label = normalizeKey(node?.data?.label);
   return processorName.includes('evaluatejsonpath') || label.includes('evaluatejsonpath');
+};
+
+const isHormonizationNode = (node) => {
+  const processorName = normalizeKey(node?.data?.processorName);
+  const label = normalizeKey(node?.data?.label);
+  return label.includes('hormonization') || processorName.includes('executegroovyscript');
+};
+
+const isScriptFileField = (field) => {
+  const label = normalizeKey(field?.label);
+  const name = normalizeKey(field?.name);
+  return label === 'scriptfile' || name === 'scriptfile';
 };
 
 const toDynamicField = (name) => ({
@@ -194,13 +207,16 @@ const NodeConfigModal = ({
   onSubmit,
   mode = 'drawer',
   controllerServiceOptions = [],
+  createDataFlow = null,
 }) => {
   const [form] = Form.useForm();
   const [dynamicPropertyNames, setDynamicPropertyNames] = useState([]);
   const [isAddPropertyOpen, setIsAddPropertyOpen] = useState(false);
   const [newPropertyName, setNewPropertyName] = useState('');
+  const [isDataMapperOpen, setIsDataMapperOpen] = useState(false);
   const baseSchema = node?.data?.schema || [];
   const shouldShowDynamicProperties = isEvaluateJsonPathNode(node);
+  const shouldShowDataMapper = isHormonizationNode(node);
 
   const schema = useMemo(() => {
     if (!shouldShowDynamicProperties) return baseSchema;
@@ -265,8 +281,21 @@ const NodeConfigModal = ({
       {schema.map((field) => (
         <div key={field.name} className="node-config-row">
           <div className="node-config-row-label">
-            {field.label}
-            {field.required === true && <span className="node-required">*</span>}
+            <div className="node-config-row-label__wrap">
+              <div className="node-config-row-label__text">
+                {field.label}
+                {field.required === true && <span className="node-required">*</span>}
+              </div>
+              {shouldShowDataMapper && isScriptFileField(field) ? (
+                <Button
+                  type="primary"
+                  className="node-config-row-label__action"
+                  onClick={() => setIsDataMapperOpen(true)}
+                >
+                  Data Mapper
+                </Button>
+              ) : null}
+            </div>
           </div>
           <Form.Item
             className="node-config-row-field"
@@ -300,7 +329,14 @@ const NodeConfigModal = ({
         destroyOnHidden
         footer={footer}
       >
-        {content}
+         {content}
+         {shouldShowDataMapper ? (
+           <DataMapperModal
+             open={isDataMapperOpen}
+             onClose={() => setIsDataMapperOpen(false)}
+             processGroupName={createDataFlow?.processGroup || ''}
+           />
+         ) : null}
         {shouldShowDynamicProperties && (
           <Modal
             className="add-property-modal"
@@ -343,7 +379,14 @@ const NodeConfigModal = ({
       destroyOnClose
       footer={footer}
     >
-      {content}
+       {content}
+       {shouldShowDataMapper ? (
+         <DataMapperModal
+           open={isDataMapperOpen}
+           onClose={() => setIsDataMapperOpen(false)}
+           processGroupName={createDataFlow?.processGroup || ''}
+         />
+       ) : null}
       {shouldShowDynamicProperties && (
         <Modal
           className="add-property-modal"

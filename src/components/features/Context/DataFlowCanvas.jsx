@@ -8,6 +8,7 @@ export default function DataFlowCanvas({
   loading,
   error,
   onOpenControllerServices,
+  createDataFlow,
   nodes,
   edges,
   onNodesChange,
@@ -61,6 +62,7 @@ export default function DataFlowCanvas({
         mode={configMode}
         onSubmit={handleConfigSubmit}
         controllerServiceOptions={controllerServiceOptions}
+        createDataFlow={createDataFlow}
       />
       <ConnectionConfigModal
         open={connectionModalOpen}

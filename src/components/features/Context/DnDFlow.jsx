@@ -14,6 +14,7 @@ function DnDFlowContent({ onOpenControllerServices, initialCreateDataFlow, initi
       loading={flow.loading}
       error={flow.error}
       onOpenControllerServices={onOpenControllerServices}
+      createDataFlow={flow.createDataFlow}
       nodes={flow.nodes}
       edges={flow.edges}
       onNodesChange={flow.onNodesChange}
