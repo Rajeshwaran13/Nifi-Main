@@ -1,15 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Modal } from 'antd';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 import DataFlowBar from './DataFlowBar';
 import WrappedDnDFlow from '../Context/DnDFlow';
 import ControllerServicesPage from './../Nodes/ControllerServicesPage';
 import ConfigureDataFlowModal from './ConfigureDataFlowModal';
 import DataFlowMonitorPage from './DataFlowMonitorPage';
+import config from '../../../constants/config';
 import {
   applyCreateDataFlow,
   CREATE_DATA_FLOW_REQUEST_EVENT,
 } from '../Context/createDataFlowEvents';
 import { editFlow } from '../../../services/DataMonitor/editFlow';
+import { restoreFlow } from '../../../services/DataMonitor/restoreFlow';
 // import TopToolBar from './TopToolBar';
+
+const pickFirst = (...values) => values.find((value) => value !== undefined && value !== null && value !== '');
 
 const DashboardLayout = () => {
   const [page, setPage] = useState('monitor');
@@ -17,6 +23,8 @@ const DashboardLayout = () => {
   const [search, setSearch] = useState('');
   const [createDataFlow, setCreateDataFlow] = useState(null);
   const [initialFlowDefinition, setInitialFlowDefinition] = useState(null);
+  const saveErrorModalRef = useRef(null);
+  const createDataFlowRef = useRef(createDataFlow);
 
   useEffect(() => {
     const handleCreateRequest = () => {
@@ -26,6 +34,77 @@ const DashboardLayout = () => {
     window.addEventListener(CREATE_DATA_FLOW_REQUEST_EVENT, handleCreateRequest);
     return () => {
       window.removeEventListener(CREATE_DATA_FLOW_REQUEST_EVENT, handleCreateRequest);
+    };
+  }, []);
+
+  useEffect(() => {
+    createDataFlowRef.current = createDataFlow;
+  }, [createDataFlow]);
+
+  useEffect(() => {
+    const handleSaveError = (event) => {
+      const errorMessage = event?.detail?.message || 'Save failed';
+      const normalizedMessage = String(errorMessage).toLowerCase();
+      const isAlreadyExists = normalizedMessage.includes('already exists');
+      if (!isAlreadyExists) return;
+
+      const title = normalizedMessage.includes('already exists')
+        ? 'Flow already exists'
+        : 'Unable to save flow';
+
+      if (saveErrorModalRef.current) {
+        saveErrorModalRef.current.destroy();
+        saveErrorModalRef.current = null;
+      }
+
+      saveErrorModalRef.current = Modal.confirm({
+        className: 'save-flow-confirm-modal',
+        rootClassName: 'save-flow-confirm-modal',
+        title,
+        icon: <ExclamationCircleFilled className="save-flow-confirm-modal__icon" />,
+        content: <div className="save-flow-confirm-modal__message">{errorMessage}</div>,
+        okText: 'Yes',
+        cancelText: 'No',
+        okButtonProps: { className: 'save-flow-confirm-modal__btn save-flow-confirm-modal__btn--ok' },
+        cancelButtonProps: {
+          className: 'save-flow-confirm-modal__btn save-flow-confirm-modal__btn--cancel',
+        },
+        centered: true,
+        width: 640,
+        maskClosable: false,
+        onOk: async () => {
+          const currentCreateDataFlow = createDataFlowRef.current;
+          const tenantCode = pickFirst(currentCreateDataFlow?.tenantCode, config?.tenantCode);
+          const processGroupName = pickFirst(
+            currentCreateDataFlow?.processGroup,
+            currentCreateDataFlow?.processGroupName
+          );
+
+          await restoreFlow({ tenantCode, processGroupName });
+          const flowDefinition = await editFlow(processGroupName);
+
+          setCreateDataFlow(flowDefinition?.createDataFlow || currentCreateDataFlow || null);
+          setInitialFlowDefinition(flowDefinition || null);
+          setPage('flow');
+
+          saveErrorModalRef.current = null;
+        },
+        onCancel: () => {
+          saveErrorModalRef.current = null;
+        },
+        afterClose: () => {
+          saveErrorModalRef.current = null;
+        },
+      });
+    };
+
+    window.addEventListener('dataflow:save:error', handleSaveError);
+    return () => {
+      window.removeEventListener('dataflow:save:error', handleSaveError);
+      if (saveErrorModalRef.current) {
+        saveErrorModalRef.current.destroy();
+        saveErrorModalRef.current = null;
+      }
     };
   }, []);
 

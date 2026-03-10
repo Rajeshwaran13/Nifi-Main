@@ -987,3 +987,81 @@ html, body, #root {
 :where(.css-dev-only-do-not-override-1enej14).ant-select .ant-select-suffix {
   color: #ffffff !important;
 }
+
+/* Save error confirm modal (Flow already exists) */
+.save-flow-confirm-modal {
+  --sfc-bg: var(--palette-panel-bg, #2f2f2f);
+  --sfc-text: var(--palette-text, #f2f2f2);
+  --sfc-muted: var(--palette-subtle-text, #d0d0d0);
+  --sfc-border: rgba(255, 255, 255, 0.06);
+  --sfc-primary: var(--palette-accent, #06b6b0);
+  --sfc-primary-hover: #089e99;
+  --sfc-warning: #f5b400;
+}
+
+.save-flow-confirm-modal .ant-modal-content {
+  background: var(--sfc-bg) !important;
+  border: 1px solid var(--sfc-border) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55) !important;
+}
+
+.save-flow-confirm-modal .ant-modal-confirm-title {
+  color: var(--sfc-text) !important;
+  font-size: 20px !important;
+  font-weight: 600 !important;
+}
+
+.save-flow-confirm-modal .ant-modal-confirm-content {
+  color: var(--sfc-muted) !important;
+  font-size: 16px !important;
+  margin-top: 10px !important;
+}
+
+.save-flow-confirm-modal__message {
+  white-space: pre-wrap;
+}
+
+.save-flow-confirm-modal .ant-modal-confirm-body .anticon,
+.save-flow-confirm-modal__icon {
+  color: var(--sfc-warning) !important;
+  font-size: 26px !important;
+  margin-top: 2px;
+}
+
+.save-flow-confirm-modal .ant-modal-confirm-btns {
+  margin-top: 18px !important;
+}
+
+.save-flow-confirm-modal__btn.ant-btn {
+  height: 40px !important;
+  padding: 0 22px !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+}
+
+.save-flow-confirm-modal__btn--cancel.ant-btn {
+  background: #ffffff !important;
+  border-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+.save-flow-confirm-modal__btn--cancel.ant-btn:hover,
+.save-flow-confirm-modal__btn--cancel.ant-btn:focus {
+  background: #f3f4f6 !important;
+  border-color: #f3f4f6 !important;
+  color: #111827 !important;
+}
+
+.save-flow-confirm-modal__btn--ok.ant-btn {
+  background: var(--sfc-primary) !important;
+  border-color: var(--sfc-primary) !important;
+  color: #ffffff !important;
+}
+
+.save-flow-confirm-modal__btn--ok.ant-btn:hover,
+.save-flow-confirm-modal__btn--ok.ant-btn:focus {
+  background: var(--sfc-primary-hover) !important;
+  border-color: var(--sfc-primary-hover) !important;
+  color: #ffffff !important;
+}

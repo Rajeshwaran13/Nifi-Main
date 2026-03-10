@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { DeleteOutlined, EyeOutlined, LeftOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
+import { useEffect, useMemo, useState } from 'react';
+import { DeleteOutlined, EyeOutlined, LeftOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Modal, Switch, message } from 'antd';
 import {
   deleteControllerService,
@@ -12,34 +12,37 @@ import {
 export default function ControllerServicesPage({ onBack }) {
   const [searchText, setSearchText] = useState('');
   const [rows, setRows] = useState([]);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [hasSynced, setHasSynced] = useState(false);
-  const [syncError, setSyncError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [togglingKey, setTogglingKey] = useState('');
   const [deletingKey, setDeletingKey] = useState('');
   const [viewingKey, setViewingKey] = useState('');
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [selectedServiceName, setSelectedServiceName] = useState('');
   const [propertyRows, setPropertyRows] = useState([]);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  const syncControllerServices = async () => {
-    setIsSyncing(true);
-    setHasSynced(true);
-    setSyncError('');
-    try {
-      const responseData = await fetchControllerServiceTypes();
-      setRows(normalizeControllerServiceRows(responseData));
-    } catch (error) {
-      setRows([]);
-      setSyncError('Unable to load controller services from API. Please try Sync again.');
-      console.error('Failed to fetch controller service types.', {
-        status: error?.response?.status,
-        payload: error?.response?.data,
-      });
-    } finally {
-      setIsSyncing(false);
-    }
-  };
+  useEffect(() => {
+    const load = async () => {
+      setIsLoading(true);
+      setLoadError('');
+      try {
+        const responseData = await fetchControllerServiceTypes();
+        setRows(normalizeControllerServiceRows(responseData));
+      } catch (error) {
+        setRows([]);
+        setLoadError('Unable to load controller services from API.');
+        console.error('Failed to fetch controller service types.', {
+          status: error?.response?.status,
+          payload: error?.response?.data,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    load();
+  }, []);
 
   const filteredRows = useMemo(() => {
     if (!searchText.trim()) {
@@ -174,12 +177,12 @@ export default function ControllerServicesPage({ onBack }) {
             />
           </div>
           <Button
-            onClick={syncControllerServices}
-            loading={isSyncing}
+            onClick={() => setIsCreateOpen(true)}
             type="primary"
+            icon={<PlusOutlined />}
             style={{ background: '#06b6b0', borderColor: '#06b6b0', minWidth: 90 }}
           >
-            Sync
+            Create
           </Button>
         </div>
       </div>
@@ -240,15 +243,34 @@ export default function ControllerServicesPage({ onBack }) {
             ) : (
               <tr style={{ background: 'rgba(79, 79, 79, 0.996)' }}>
                 <td colSpan={4} style={{ textAlign: 'center', padding: '16px 12px', color: 'rgba(0, 0, 0, 1)' }}>
-                  {isSyncing
-                    ? 'Syncing controller services...'
-                    : syncError || (hasSynced ? 'No controller services returned from API.' : 'Click Sync to load controller services')}
+                  {isLoading ? 'Loading controller services...' : loadError || 'No controller services available.'}
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
+
+      <Modal
+        title="Create Controller Service"
+        open={isCreateOpen}
+        onCancel={() => setIsCreateOpen(false)}
+        footer={[
+          <Button key="close" onClick={() => setIsCreateOpen(false)}>
+            Close
+          </Button>,
+        ]}
+        width={520}
+        styles={{
+          content: { background: '#262626', color: '#fff' },
+          header: { background: '#262626', color: '#fff', borderBottom: '1px solid #4a4a4a' },
+          body: { background: '#262626', color: '#fff' },
+        }}
+      >
+        <div style={{ color: '#d0d0d0' }}>
+          Create action UI only (no API call).
+        </div>
+      </Modal>
 
       <Modal
         title={`Controller Properties${selectedServiceName ? ` - ${selectedServiceName}` : ''}`}

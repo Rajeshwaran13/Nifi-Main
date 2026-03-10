@@ -1,6 +1,5 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { message } from 'antd';
 import { getAllFlow } from '../../../services/DataMonitor/getAllFlow';
 import { deleteFlow } from '../../../services/DataMonitor/deleteFlow';
 
@@ -13,7 +12,7 @@ export default function DataFlowMonitorPage({
   const [rows, setRows] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [deletingId, setDeletingId] = useState(null);
+  const [deletingKey, setDeletingKey] = useState(null);
   const normalizedQuery = String(search || '').trim().toLowerCase();
 
   const loadFlows = useCallback(async () => {
@@ -37,22 +36,22 @@ export default function DataFlowMonitorPage({
 
   const handleDelete = useCallback(
     async (row) => {
-      if (!row?.id || deletingId) return;
+      const key = row?.processGroupName || row?.id;
+      if (!key || deletingKey) return;
 
-      setDeletingId(row.id);
+      setDeletingKey(key);
       try {
-        const response = await deleteFlow({ id: row.id });
-        message.success(response?.message || 'Flow deleted successfully');
+        await deleteFlow({ processGroupName: row?.processGroupName, id: row?.id });
         await loadFlows();
       } catch (deleteError) {
-        message.error(
+        setError(
           deleteError?.response?.data?.message || deleteError?.message || 'Failed to delete flow'
         );
       } finally {
-        setDeletingId(null);
+        setDeletingKey(null);
       }
     },
-    [deletingId, loadFlows]
+    [deletingKey, loadFlows]
   );
 
   const filteredRows = useMemo(
@@ -144,7 +143,7 @@ export default function DataFlowMonitorPage({
                       className="monitor-page__icon-btn"
                       aria-label={`Delete ${row.processGroupName || 'flow'}`}
                       onClick={() => handleDelete(row)}
-                      disabled={deletingId === row.id}
+                      disabled={deletingKey === (row.processGroupName || row.id)}
                     >
                       <DeleteOutlined />
                     </button>
