@@ -4,9 +4,9 @@ import DataFlowCanvas from './DataFlowCanvas';
 import useDataFlowBuilder from './useDataFlowBuilder';
 import '@xyflow/react/dist/style.css';
 
-function DnDFlowContent({ onOpenControllerServices }) {
+function DnDFlowContent({ onOpenControllerServices, initialCreateDataFlow, initialFlowDefinition }) {
   const [selectedProcessor, setSelectedProcessor] = useDnD();
-  const flow = useDataFlowBuilder();
+  const flow = useDataFlowBuilder(initialCreateDataFlow, initialFlowDefinition);
 
   return (
     <DataFlowCanvas
@@ -37,11 +37,19 @@ function DnDFlowContent({ onOpenControllerServices }) {
   );
 }
 
-export default function WrappedDnDFlow({ onOpenControllerServices }) {
+export default function WrappedDnDFlow({
+  onOpenControllerServices,
+  initialCreateDataFlow = null,
+  initialFlowDefinition = null,
+}) {
   return (
     <ReactFlowProvider>
       <DnDProvider>
-        <DnDFlowContent onOpenControllerServices={onOpenControllerServices} />
+        <DnDFlowContent
+          onOpenControllerServices={onOpenControllerServices}
+          initialCreateDataFlow={initialCreateDataFlow}
+          initialFlowDefinition={initialFlowDefinition}
+        />
       </DnDProvider>
     </ReactFlowProvider>
   );

@@ -11,6 +11,10 @@ const DataFlowBar = ({ search, setSearch, showSearch = true, showCreate = true, 
     window.dispatchEvent(new CustomEvent('dataflow:deploy:request'));
   };
 
+  const handleSaveFlow = () => {
+    window.dispatchEvent(new CustomEvent('dataflow:save:request'));
+  };
+
   return (
     <div className="dataflow-bar d-flex align-items-center justify-content-between border-bottom bg-dark text-white">
       <div className="d-flex align-items-center gap-2">
@@ -39,7 +43,7 @@ const DataFlowBar = ({ search, setSearch, showSearch = true, showCreate = true, 
           <CaretRightOutlined className="dataflow-btn__icon" />
           <span>Run</span>
         </button>
-        <button className="btn btn-secondary dataflow-btn">
+        <button className="btn btn-secondary dataflow-btn" onClick={handleSaveFlow}>
           <SaveOutlined className="dataflow-btn__icon" />
           <span>Save</span>
         </button>

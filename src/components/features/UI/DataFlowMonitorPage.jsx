@@ -1,20 +1,69 @@
-import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { message } from 'antd';
+import { getAllFlow } from '../../../services/DataMonitor/getAllFlow';
+import { deleteFlow } from '../../../services/DataMonitor/deleteFlow';
 
-const formatVersion = (value) => (value ? `${value}.1.0` : 'V.1.0');
-//dataflow monitor page here
 export default function DataFlowMonitorPage({
   search = '',
   onSearchChange,
   onCreate,
-  createDataFlow,
+  onEdit,
 }) {
-  const rows = createDataFlow ? [createDataFlow] : [];
+  const [rows, setRows] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [deletingId, setDeletingId] = useState(null);
   const normalizedQuery = String(search || '').trim().toLowerCase();
-  const filteredRows = rows.filter((row) => {
-    if (!normalizedQuery) return true;
-    return [row.processGroup, row.domainName, row.vendorName, row.sensorName]
-      .some((value) => String(value || '').toLowerCase().includes(normalizedQuery));
-  });
+
+  const loadFlows = useCallback(async () => {
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const response = await getAllFlow();
+      setRows(response);
+    } catch (loadError) {
+      setRows([]);
+      setError(loadError?.response?.data?.message || loadError?.message || 'Unable to load flows.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadFlows();
+  }, [loadFlows]);
+
+  const handleDelete = useCallback(
+    async (row) => {
+      if (!row?.id || deletingId) return;
+
+      setDeletingId(row.id);
+      try {
+        const response = await deleteFlow({ id: row.id });
+        message.success(response?.message || 'Flow deleted successfully');
+        await loadFlows();
+      } catch (deleteError) {
+        message.error(
+          deleteError?.response?.data?.message || deleteError?.message || 'Failed to delete flow'
+        );
+      } finally {
+        setDeletingId(null);
+      }
+    },
+    [deletingId, loadFlows]
+  );
+
+  const filteredRows = useMemo(
+    () =>
+      rows.filter((row) => {
+        if (!normalizedQuery) return true;
+        return [row.processGroupName, row.domainName, row.currentFlowStatus, row.version]
+          .some((value) => String(value || '').toLowerCase().includes(normalizedQuery));
+      }),
+    [normalizedQuery, rows]
+  );
 
   return (
     <div className="monitor-page">
@@ -43,7 +92,7 @@ export default function DataFlowMonitorPage({
           <thead>
             <tr>
               <th>Sl.No</th>
-              <th>Name</th>
+              <th className="monitor-page__name-col">Name</th>
               <th>Status</th>
               <th>Domain Name</th>
               <th>Version No.</th>
@@ -55,27 +104,57 @@ export default function DataFlowMonitorPage({
             </tr>
           </thead>
           <tbody>
-            {filteredRows.length > 0 ? (
+            {isLoading ? (
+              <tr>
+                <td colSpan="10" className="monitor-page__empty">
+                  Loading data flows...
+                </td>
+              </tr>
+            ) : error ? (
+              <tr>
+                <td colSpan="10" className="monitor-page__empty">
+                  {error}
+                </td>
+              </tr>
+            ) : filteredRows.length > 0 ? (
               filteredRows.map((row, index) => (
-                <tr key={`${row.processGroup}-${index}`}>
+                <tr key={row.id || `${row.processGroupName}-${index}`}>
                   <td>{index + 1}</td>
-                  <td>{row.processGroup}</td>
+                  <td className="monitor-page__name-cell">{row.processGroupName ?? ''}</td>
                   <td>
-                    <span className="monitor-page__status">Good Health</span>
+                    <span className="monitor-page__status">{row.currentFlowStatus ?? ''}</span>
                   </td>
-                  <td>{row.domainName || '-'}</td>
-                  <td>{formatVersion(row.version)}</td>
-                  <td>0</td>
-                  <td>0 B/s</td>
-                  <td>0 B/s</td>
-                  <td>0 B/s</td>
-                  <td>-</td>
+                  <td>{row.domainName ?? ''}</td>
+                  <td>{row.version ?? ''}</td>
+                  <td>{row.lagCount ?? ''}</td>
+                  <td>{row.currentReceived ?? ''}</td>
+                  <td>{row.currentSent ?? ''}</td>
+                  <td>{row.dataThroughput ?? ''}</td>
+                  <td className="monitor-page__actions-cell">
+                    <button
+                      type="button"
+                      className="monitor-page__icon-btn"
+                      aria-label={`Edit ${row.processGroupName || 'flow'}`}
+                      onClick={() => onEdit?.(row)}
+                    >
+                      <EditOutlined />
+                    </button>
+                    <button
+                      type="button"
+                      className="monitor-page__icon-btn"
+                      aria-label={`Delete ${row.processGroupName || 'flow'}`}
+                      onClick={() => handleDelete(row)}
+                      disabled={deletingId === row.id}
+                    >
+                      <DeleteOutlined />
+                    </button>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
                 <td colSpan="10" className="monitor-page__empty">
-                  {rows.length > 0 ? 'No matching data flows found.' : 'No data flows created yet.'}
+                  {rows.length > 0 ? 'No matching data flows found.' : 'No data flows available.'}
                 </td>
               </tr>
             )}

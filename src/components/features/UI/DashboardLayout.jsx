@@ -8,6 +8,7 @@ import {
   applyCreateDataFlow,
   CREATE_DATA_FLOW_REQUEST_EVENT,
 } from '../Context/createDataFlowEvents';
+import { editFlow } from '../../../services/DataMonitor/editFlow';
 // import TopToolBar from './TopToolBar';
 
 const DashboardLayout = () => {
@@ -15,6 +16,7 @@ const DashboardLayout = () => {
   const [configureModalOpen, setConfigureModalOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [createDataFlow, setCreateDataFlow] = useState(null);
+  const [initialFlowDefinition, setInitialFlowDefinition] = useState(null);
 
   useEffect(() => {
     const handleCreateRequest = () => {
@@ -29,9 +31,31 @@ const DashboardLayout = () => {
 
   const handleCreateApply = (payload) => {
     setCreateDataFlow(payload);
+    setInitialFlowDefinition(null);
     applyCreateDataFlow(payload);
     setConfigureModalOpen(false);
     setPage('flow');
+  };
+
+  const handleEditFlow = async (row) => {
+    const processGroupName = row?.processGroupName;
+    if (!processGroupName) return;
+
+    try {
+      const flowDefinition = await editFlow(processGroupName);
+
+      setCreateDataFlow(flowDefinition?.createDataFlow || null);
+      setInitialFlowDefinition(flowDefinition);
+      setPage('flow');
+    } catch (error) {
+      window.dispatchEvent(
+        new CustomEvent('dataflow:edit:error', {
+          detail: {
+            message: error?.response?.data?.message || error?.message || 'Failed to load flow',
+          },
+        })
+      );
+    }
   };
 
   return (
@@ -43,7 +67,7 @@ const DashboardLayout = () => {
               search={search}
               onSearchChange={setSearch}
               onCreate={() => setConfigureModalOpen(true)}
-              createDataFlow={createDataFlow}
+              onEdit={handleEditFlow}
             />
             <ConfigureDataFlowModal
               open={configureModalOpen}
@@ -55,7 +79,11 @@ const DashboardLayout = () => {
           <>
             <DataFlowBar showSearch={false} showCreate={false} onBack={() => setPage('monitor')} />
             <div style={canvasStyle}>
-              <WrappedDnDFlow onOpenControllerServices={() => setPage('controller-services')} />
+              <WrappedDnDFlow
+                onOpenControllerServices={() => setPage('controller-services')}
+                initialCreateDataFlow={createDataFlow}
+                initialFlowDefinition={initialFlowDefinition}
+              />
             </div>
             <ConfigureDataFlowModal
               open={configureModalOpen}

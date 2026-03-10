@@ -6,8 +6,9 @@ import {
   fetchConfigureDataFlowOptions,
   fetchVendors,
 } from '../../../services/configureDataFlow';
+import config from '../../../constants/config';
 
-const TENANT_CODE = 'smartDomain';
+const TENANT_CODE = config.tenantCode;
 const buildEmptySelectOption = (label) => [{ label, value: '' }];
 const buildRequiredSelectRule = (message) => ({
   validator: async (_, value) => {

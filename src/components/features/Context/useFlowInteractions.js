@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { addEdge, useEdgesState, useNodesState, useReactFlow } from '@xyflow/react';
 import { FlowNode } from '../Nodes/FlowNode';
 import { fetchControllerServiceOptions } from '../../../services/Contoller_services/controllerServiceTypesService';
@@ -13,7 +13,78 @@ import {
   toControllerServiceIdConfig,
 } from './dndFlowUtils';
 
-export default function useFlowInteractions(createDataFlow) {
+const normalizeToken = (value) =>
+  String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+
+const getNextNodeId = (nodes = []) =>
+  nodes.reduce((maxId, node) => {
+    const matched = String(node?.id || '').match(/dndnode_(\d+)/i);
+    if (!matched) return maxId;
+    return Math.max(maxId, Number(matched[1]) + 1);
+  }, 0);
+
+const hydrateImportedNodes = (nodes = [], processors = []) =>
+  (nodes || []).map((node) => {
+    const nodeData = node?.data || {};
+    const matchedProcessor = (processors || []).find((processor) => {
+      const processorName = normalizeToken(processor?.processorName);
+      const processorAlias = normalizeToken(processor?.nodeName);
+      const nodeProcessorName = normalizeToken(nodeData?.processorName);
+      const nodeLabel = normalizeToken(nodeData?.label);
+
+      return (
+        (processorName && processorName === nodeProcessorName) ||
+        (processorAlias && processorAlias === nodeLabel)
+      );
+    });
+
+    if (!matchedProcessor) {
+      return {
+        ...node,
+        data: {
+          handleColor: '#06b6b0',
+          ...nodeData,
+        },
+      };
+    }
+
+    const processorData = buildNodeData(matchedProcessor);
+    const importedPorts = nodeData.ports || {};
+    const processorPorts = processorData.ports || {};
+    const mergedPorts = {
+      ...processorPorts,
+      ...importedPorts,
+      relationships:
+        Array.isArray(importedPorts.relationships) && importedPorts.relationships.length > 0
+          ? importedPorts.relationships
+          : processorPorts.relationships || [],
+    };
+
+    return {
+      ...node,
+      type: node?.type || 'processorNode',
+      data: {
+        ...processorData,
+        ...nodeData,
+        config: {
+          ...(processorData.config || {}),
+          ...(nodeData.config || {}),
+        },
+        schema:
+          Array.isArray(nodeData.schema) && nodeData.schema.length > 0
+            ? nodeData.schema
+            : processorData.schema,
+        ports: mergedPorts,
+        relationships: mergedPorts.relationships,
+        handleColor: nodeData.handleColor || processorData.handleColor || '#06b6b0',
+      },
+    };
+  });
+
+export default function useFlowInteractions(createDataFlow, initialFlowDefinition, processors) {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { screenToFlowPosition } = useReactFlow();
@@ -184,6 +255,22 @@ export default function useFlowInteractions(createDataFlow) {
     },
     [activeNode, controllerServiceOptions, setNodes, closeModal]
   );
+
+  useEffect(() => {
+    if (!initialFlowDefinition) return;
+
+    const importedNodes = hydrateImportedNodes(initialFlowDefinition.nodes, processors);
+    const importedEdges = Array.isArray(initialFlowDefinition.edges) ? initialFlowDefinition.edges : [];
+
+    setNodes(importedNodes);
+    setEdges(importedEdges);
+    setNextNodeId(getNextNodeId(importedNodes));
+    setDrawerOpen(false);
+    setActiveNode(null);
+    setPendingConnection(null);
+    setConnectionModalOpen(false);
+    setConnectionNodes({ from: null, to: null });
+  }, [initialFlowDefinition, processors, setEdges, setNodes]);
 
   return {
     nodes,

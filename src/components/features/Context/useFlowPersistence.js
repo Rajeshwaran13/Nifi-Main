@@ -1,8 +1,17 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { deployFlow } from '../../../services/deployService';
+import { saveFlow } from '../../../services/DataMonitor/saveFlowService';
 import { buildExportConfig } from './dndFlowUtils';
 
-export default function useFlowPersistence({ nodes, edges, createDataFlow, isDeploying, setIsDeploying }) {
+export default function useFlowPersistence({
+  nodes,
+  edges,
+  createDataFlow,
+  isDeploying,
+  setIsDeploying,
+  isSaving,
+  setIsSaving,
+}) {
   const buildExportPayload = useMemo(
     () => () => {
       const sanitizedNodes = nodes.map((node) => ({
@@ -85,6 +94,30 @@ export default function useFlowPersistence({ nodes, edges, createDataFlow, isDep
     }
   }, [buildExportPayload, createDataFlow, isDeploying]);
 
+  const handleSaveRequest = useCallback(async () => {
+    if (isSaving) return;
+
+    const payload = buildExportPayload();
+
+    setIsSaving(true);
+    try {
+      const response = await saveFlow({ payload });
+      window.dispatchEvent(new CustomEvent('dataflow:save:success', { detail: response }));
+    } catch (error) {
+      window.dispatchEvent(
+        new CustomEvent('dataflow:save:error', {
+          detail: {
+            message: error?.response?.data?.message || error?.message || 'Save failed',
+            status: error?.response?.status || null,
+            payload: error?.response?.data || null,
+          },
+        })
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  }, [buildExportPayload, isSaving, setIsSaving]);
+
   useEffect(() => {
     const handleExportRequest = () => downloadFlowJson();
     window.addEventListener('dataflow:export:request', handleExportRequest);
@@ -99,6 +132,13 @@ export default function useFlowPersistence({ nodes, edges, createDataFlow, isDep
       window.removeEventListener('dataflow:deploy:request', handleDeployRequest);
     };
   }, [handleDeployRequest]);
+
+  useEffect(() => {
+    window.addEventListener('dataflow:save:request', handleSaveRequest);
+    return () => {
+      window.removeEventListener('dataflow:save:request', handleSaveRequest);
+    };
+  }, [handleSaveRequest]);
 
   return { buildExportPayload };
 }

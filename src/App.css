@@ -861,26 +861,47 @@ html, body, #root {
 .monitor-page__table-wrap {
   flex: 1;
   padding: 18px 20px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .monitor-page__table {
   width: 100%;
   border-collapse: collapse;
   color: #ffffff;
+  table-layout: fixed;
 }
 
 .monitor-page__table th,
 .monitor-page__table td {
-  padding: 14px 18px;
+  padding: 12px 12px;
   border-bottom: 1px solid #3f3f3f;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .monitor-page__table thead th {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
   color: #f2f2f2;
+}
+
+.monitor-page__table tbody td {
+  font-size: 11px;
+}
+
+.monitor-page__name-col,
+.monitor-page__name-cell {
+  width: 28%;
+}
+
+.monitor-page__name-cell {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  word-break: break-word;
+  line-height: 1.35;
 }
 
 .monitor-page__table tbody tr {
@@ -890,11 +911,39 @@ html, body, #root {
 .monitor-page__status {
   display: inline-flex;
   align-items: center;
-  min-height: 28px;
-  padding: 0 12px;
+  min-height: 24px;
+  max-width: 100%;
+  padding: 0 10px;
   background: #006d75;
   border: 1px solid #06b6b0;
   color: #ffffff;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.monitor-page__icon-btn {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.monitor-page__icon-btn .anticon {
+  color: #ffffff !important;
+  font-size: 16px;
+}
+
+.monitor-page__actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .monitor-page__empty {
